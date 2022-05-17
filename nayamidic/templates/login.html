@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block customcss %}
+<link href="{% static 'style.css' %}" rel="stylesheet">
+{% endblock customcss %}
+
+{% block content %}
+<body class="text-center">
+    <main class="form-signin">
+        <form method="POST">{% csrf_token %}
+            {{ context }}
+            <h1 class="h3 mb-3 fw-normal">Please log in</h1>
+            {{ form.non_field_errors }}
+            {% for field in form %}
+            {{ field }}
+            {{ field.errors }}
+            {% endfor %}
+            <button class="w-100 btn btn-lg btn-primary" type="submit">log in</button><br /> <br />
+            <p><a href="{% url 'signup' %}">新規登録</a></p>
+        </form>
+    </main>    
+</body>
+{% endblock content %}

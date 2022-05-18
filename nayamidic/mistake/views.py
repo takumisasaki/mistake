@@ -3,7 +3,7 @@ from urllib import request
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic import DetailView, CreateView, TemplateView
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from .models import User as user
@@ -36,6 +36,8 @@ class HomeView(LoginRequiredMixin, TemplateView):#「LoginRequiredMixin → Temp
     template_name = 'home.html'
     login_url = '/login/'
 
+class Logout(LogoutView):
+    template_name = 'logout.html'
 
 
 # def signupfunk(request):

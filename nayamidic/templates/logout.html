@@ -10,8 +10,8 @@
 <body class="text-center">    
     <main class="form-signin">
         {{ user.get_username }}
-        <h1>Hello</h1>
-        <p><a href="{% url 'logout' %}">ログアウト</a></p>
+        <h1>ログアウトしました。</h1>
+        <p><a href="{% url 'login' %}">ログイン</a></p>
     </main>    
 </body>
 {% endblock content %}

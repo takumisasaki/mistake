@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block customcss %}
+<link href="{% static 'style.css' %}" rel="stylesheet">
+{% endblock customcss %}
+
+
+{% block content %}
+<body class="text-center">    
+    <main class="form-signin">
+        {{ user.get_username }}
+        <h1>Hello</h1>
+        {% for Post in object_list %}
+         <li>{{ Post.categories }}</li>
+         <li>{{ Post.text }}</li>
+        {% endfor %}
+    </main>    
+</body>
+{% endblock content %}

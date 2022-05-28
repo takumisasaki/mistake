@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block customcss %}
+<link href="{% static 'style.css' %}" rel="stylesheet">
+{% endblock customcss %}
+
+
+{% block content %}
+<body class="text-center">    
+    <main class="form-signin">
+        {{ user.get_username }}
+        <ul>
+            {% for error in form.username.errors %}
+            <li>
+                {{ error }}
+            </li>
+            {% endfor %}
+        </ul>
+        <h1>print("HelloWorld")</h1>
+        <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+            <input type="hidden" name='id' value='{{ user.pk }}'>
+            <p> {{ form.id }} </p>
+            <p>名前:{{ form.username }}</p>
+            <p>ニックネーム:{{ form.nickname }}</p>
+            <p>メールアドレス:{{ form.email }}</p>
+            <input type="submit" value='userupdate'>
+        </form>
+    </main>    
+</body>
+{% endblock content %}

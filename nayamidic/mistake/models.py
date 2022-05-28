@@ -1,5 +1,6 @@
 import email
 from tabnanny import verbose
+from unicodedata import category
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -36,7 +37,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
-
+    
     username = models.CharField(_("username"), max_length=50, validators=[username_validator], unique=True)
     nickname = models.CharField(_("nickname"), max_length=50)
     email = models.EmailField(_("email_address"),blank=True, null=True, unique=True)
@@ -58,9 +59,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     def clean(self):
         super().clean()
         self.email = self.__class__.objects.normalize_email(self.email)
+
+class Post(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    categories = models.CharField(max_length=50)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now=True, help_text='投稿日')
+    updated_at = models.DateTimeField(null=True, help_text='編集済み')
     
-
-
 
 # class List(models.Model):
 #     author = models.ForeignKey(User, on_delete=models.CASCADE)

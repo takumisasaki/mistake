@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block customcss %}
+<link href="{% static 'style.css' %}" rel="stylesheet">
+{% endblock customcss %}
+
+
+{% block content %}
+<body class="text-center">    
+    <main class="form-signin">
+        {{ user.get_username }}
+        <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+            <input type="hidden" name='user' value='{{ user.pk }}'>
+           <p> カテゴリ：{{ form.categories }} </p>
+            {{ form.text }}
+            <input type="submit" value='登録'>
+        </form>
+        <h1>Hello</h1>
+    </main>    
+</body>
+{% endblock content %}

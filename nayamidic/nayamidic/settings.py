@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'nayamidic',
     'mistake',
-    # 'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -96,6 +95,7 @@ DATABASES = {
 # os.path.join(BASE_DIR, 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {

@@ -12,8 +12,9 @@
         {{ user.get_username }}
         <h1>Hello</h1>
         <p><a href="{% url 'logout' %}">ログアウト</a></p>
-        <p><a href="{% url 'post_create' %}">作成</a></p>
-        <p><a href="{% url 'user_update' user.pk %}">作成</a></p>
+        <p><a href="{% url 'post_create' user.pk %}">作成</a></p>
+        <p><a href="{% url 'user_update' user.pk %}">useredit</a></p>
+        <p><a href="{% url 'my_page' user.pk %}">mypage</a></p>
     </main>    
 </body>
 {% endblock content %}

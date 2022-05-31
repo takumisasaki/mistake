@@ -6,8 +6,9 @@ from django.views.generic import DetailView, CreateView, TemplateView, ListView,
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
+from pkg_resources import resource_stream
 from .models import Post, User as user
-from .forms import LoginForm, SignupForm, PostForm, UserUpdateForm
+from .forms import LoginForm, SignupForm, PostForm, UserUpdateForm, PostEditForm
 from django.db import IntegrityError
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -47,8 +48,7 @@ class PostView(LoginRequiredMixin, ListView):
     template_name = 'post_view.html'
     model = Post
 
-class UserUpdate(LoginRequiredMixin, UpdateView):    
-    print('-------Views')
+class UserUpdate(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         print('def formvaild')
         form.update(user=self.request.user)
@@ -57,8 +57,6 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'user_update.html'
     form_class = UserUpdateForm
     model = user
-    studentModel = {'userModel': user.objects.all()}
-
     
     def get_success_url(self):
         print('def get_success_url')
@@ -67,3 +65,23 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
             if self.request.user == i:
                 print("重複してんだよこの野郎")
         return reverse('user_update', kwargs={'pk': self.kwargs.get('pk')})
+
+class PostEdit(LoginRequiredMixin, UpdateView):
+    template_name = 'post_edit.html'
+    form_class = PostEditForm
+    model = Post
+
+    def form_valid(self, form):
+        form.update(user=self.request.post)
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('post_edit', kwargs={'pk': self.kwargs.get('pk')})
+
+def mypagefunk(request, pk):
+    model = list(Post.objects.filter(user=pk).all())
+    return render(request, 'my_page.html', {'model':model})
+
+
+
+

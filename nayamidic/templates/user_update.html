@@ -13,7 +13,9 @@
         <ul>
             {% for error in form.username.errors %}
             <li>
-                {{ error }}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                  </div>
             </li>
             {% endfor %}
         </ul>

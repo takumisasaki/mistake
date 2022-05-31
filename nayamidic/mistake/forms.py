@@ -44,8 +44,6 @@ class UserUpdateForm(forms.ModelForm):
             for j in email_check[i].values():
                 if email == j:
                     self.add_error('username', 'このアドレスは既に登録されています。')
-                    # raise forms.ValidationError("この名前は既に登録されています。")
-                    # raise Exception("重複してる")
         return cleaned_data
 
     def __init__(self, username=None, nickname=None, email=None, *args, **kwargs):
@@ -58,8 +56,24 @@ class UserUpdateForm(forms.ModelForm):
         
     
     def update(self, user):
-        print('defupdate')
+        print(user,'---------')
         user.email = self.cleaned_data['email']
         user.username = self.cleaned_data['username']
         user.nickname = self.cleaned_data['nickname']
         user.save()
+
+class PostEditForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ('user', 'categories', 'text')
+    
+    def __init__(self, user=None, categories=None, text=None, *args, **kwargs):
+        kwargs.setdefault('label_suffix', '')
+        print('最初に呼ばれるインスタンス')
+        super().__init__(*args, **kwargs)
+
+    def update(self, post):
+        post.user = self.cleaned_data['user']
+        post.categories = self.cleaned_data['categories']
+        post.text = self.cleaned_data['user']
+        post.save()

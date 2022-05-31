@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/nayamidic/manage.py",
             "args": [
                 "runserver",
-                "--nothreading"
+                "--nothreading",
             ],
             "django": true,
             "justMyCode": true

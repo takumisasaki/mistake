@@ -66,6 +66,13 @@ class Post(models.Model):
     text = models.TextField()
     created_at = models.DateTimeField(auto_now=True, help_text='投稿日')
     updated_at = models.DateTimeField(null=True, help_text='編集済み')
+    delete_flag = models.IntegerField(default=0)
+    like_count = models.IntegerField(default=0)
+
+class like(models.Model):
+    user_id = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    post_id = models.ForeignKey(Post, on_delete=models.DO_NOTHING)
+    like_flag = models.BooleanField(default=False)
     
 
 # class List(models.Model):

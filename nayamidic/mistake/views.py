@@ -1,4 +1,5 @@
 from re import template
+import this
 from urllib import request
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
@@ -7,11 +8,12 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from pkg_resources import resource_stream
-from .models import Post, User as user
+from .models import Post, like, User as user
 from .forms import LoginForm, SignupForm, PostForm, UserUpdateForm, PostEditForm
 from django.db import IntegrityError
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 
 class Signup(CreateView):
     template_name = "signup.html"
@@ -79,8 +81,38 @@ class PostEdit(LoginRequiredMixin, UpdateView):
         return reverse('post_edit', kwargs={'pk': self.kwargs.get('pk')})
 
 def mypagefunk(request, pk):
-    model = list(Post.objects.filter(user=pk).all())
+    model = list(Post.objects.filter(user=pk, delete_flag=0).all())
     return render(request, 'my_page.html', {'model':model})
+
+class PostList(LoginRequiredMixin, TemplateView):
+    template_name = 'toppage.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post_list'] = Post.objects.all()
+        return context
+
+
+def likefunc(request, user_id, post_id):
+    model = like.objects.filter(user_id=user_id,  post_id=post_id)
+    print(model)
+    post_box = Post.objects.get(pk=post_id)
+    if model.count() == 0:
+        like_table = like()
+        like_table.user_id = request.user
+        like_table.post_id = post_box
+        like_table.save()
+    else:
+        model.delete()
+    this_post = like.objects.filter(post_id=post_id).count()
+    post_box.like_count = this_post
+    post_box.save()
+    print(post_box.like_count)
+    if request.is_ajax():
+        return JsonResponse({'post_list':post_box})
+    return render(request, 'toppage.html')
+
+
 
 
 

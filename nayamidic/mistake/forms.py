@@ -75,5 +75,5 @@ class PostEditForm(forms.ModelForm):
     def update(self, post):
         post.user = self.cleaned_data['user']
         post.categories = self.cleaned_data['categories']
-        post.text = self.cleaned_data['user']
+        post.text = self.cleaned_data['text']
         post.save()

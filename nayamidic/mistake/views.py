@@ -1,3 +1,4 @@
+from multiprocessing import context
 from re import template
 import this
 from urllib import request
@@ -36,7 +37,7 @@ class Login(LoginView):
 
 class HomeView(LoginRequiredMixin, TemplateView):#「LoginRequiredMixin → TemplateView」この順番で記述しないとログイン必須機能が表れないので注意！！
     template_name = 'home.html'
-    login_url = '/login/'
+    # login_url = '/login/'
 
 class Logout(LogoutView):
     template_name = 'logout.html'
@@ -49,6 +50,13 @@ class PostCreate(LoginRequiredMixin, CreateView):
 class PostView(LoginRequiredMixin, ListView):
     template_name = 'post_view.html'
     model = Post
+
+    def get_queryset(self, **kwargs):
+        queryset = super().get_queryset(**kwargs) # Article.objects.all() と同じ結果
+        # is_publishedがTrueのものに絞り、titleをキーに並び変える
+        queryset = queryset.filter(delete_flag=0)
+
+        return queryset
 
 class UserUpdate(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
@@ -74,11 +82,22 @@ class PostEdit(LoginRequiredMixin, UpdateView):
     model = Post
 
     def form_valid(self, form):
-        form.update(user=self.request.post)
+        form.update(post=self.request.user)
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('post_edit', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse('my_page', kwargs={'pk': self.request.user.id })
+
+def deletefunc(request, pk):
+    if request.method == 'POST':
+        target_post = Post.objects.filter(pk=pk).get(delete_flag=0)
+        print(target_post)
+        target_post.delete_flag = 1
+        print(target_post)
+        target_post.save()
+        model = list(Post.objects.filter(user=pk, delete_flag=0).all())
+        return render(request, 'my_page.html', {'model':model})
+        #  kwargs={'pk': request.user.id }
 
 def mypagefunk(request, pk):
     model = list(Post.objects.filter(user=pk, delete_flag=0).all())
@@ -86,6 +105,7 @@ def mypagefunk(request, pk):
 
 class PostList(LoginRequiredMixin, TemplateView):
     template_name = 'toppage.html'
+    login_url = '/login/'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -93,24 +113,31 @@ class PostList(LoginRequiredMixin, TemplateView):
         return context
 
 
-def likefunc(request, user_id, post_id):
-    model = like.objects.filter(user_id=user_id,  post_id=post_id)
-    print(model)
-    post_box = Post.objects.get(pk=post_id)
-    if model.count() == 0:
-        like_table = like()
-        like_table.user_id = request.user
-        like_table.post_id = post_box
-        like_table.save()
-    else:
-        model.delete()
-    this_post = like.objects.filter(post_id=post_id).count()
-    post_box.like_count = this_post
-    post_box.save()
-    print(post_box.like_count)
-    if request.is_ajax():
-        return JsonResponse({'post_list':post_box})
-    return render(request, 'toppage.html')
+def likefunc(request):
+    if request.method == 'POST':
+        post_id = request.POST.get('post_id')
+        print(post_id)
+        model = like.objects.filter(user_id=request.user,  post_id=post_id)
+        post_box = Post.objects.get(pk=post_id)
+        if model.count() == 0:
+            like_table = like()
+            like_table.user_id = request.user
+            like_table.post_id = post_box
+            like_table.save()
+        else:
+            model.delete()
+        this_post = like.objects.filter(post_id=post_id).count()
+        post_box.like_count = this_post
+        post_box.save()
+        print(post_box.like_count)
+        context = {
+            'post_id':post_box.id,
+            'like_count':post_box.like_count
+        }
+        print(context)
+        if request.is_ajax():
+            return JsonResponse(context)
+        return render(request, 'toppage.html', context)
 
 
 

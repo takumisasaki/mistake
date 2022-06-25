@@ -16,7 +16,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 Login_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = 'toppage'
 AUTH_USER_MODEL = 'mistake.User'
 
 # Quick-start development settings - unsuitable for production

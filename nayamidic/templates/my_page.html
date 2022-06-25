@@ -9,9 +9,11 @@
 {% block content %}
 <body class="text-center">    
     <main class="form-signin">
-        {{ user.get_username }}
+        {{ user.get_username }}<br /><br />
         {% for item in model%}
-            {{ item.categories }}
+            {{ item.categories }}<br /><br />
+            {{ item.text }}
+            <p><a href="{% url 'post_edit' item.pk %}">{{ item.pk }}</a></p>
         {% endfor %}
     </main>    
 </body>

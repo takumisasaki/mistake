@@ -1,3 +1,8 @@
-h2 {
+li{
+    list-style:none;
+    text-align: left;
+}
+.head_list{
     color: white;
+    text-align: left;
 }

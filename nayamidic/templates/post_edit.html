@@ -11,12 +11,13 @@
     <main class="form-signin">
         {{ user.get_username }}
         <form action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-            <input type="hidden" name='user' value='{{ post.pk }}'>
-           <p> カテゴリ：{{ form.categories }} </p>
+            <p> カテゴリ：{{ form.categories }} </p>
             {{ form.text }}
+            <input type="hidden" name='user' value='{{ user.pk }}'>
+            {{ form.pk }}
             <input type="submit" value='edit'>
         </form>
-        <h1>Hello</h1>
+        {% include 'post_delete.html' %}
     </main>    
 </body>
 {% endblock content %}

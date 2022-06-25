@@ -1,7 +1,7 @@
 from django.urls import path
 # from .views import signupfunk
 from . import views
-from .views import HomeView, PostCreate, Signup, Login, Logout, PostView, UserUpdate, PostEdit, PostList , mypagefunk, likefunc
+from .views import HomeView, PostCreate, Signup, Login, Logout, PostView, UserUpdate, PostEdit, PostList, deletefunc , mypagefunk, likefunc
 
 
 urlpatterns = [
@@ -13,7 +13,8 @@ urlpatterns = [
     path('post_view/', PostView.as_view(), name='post_view'),
     path('user_update/<int:pk>', UserUpdate.as_view(), name='user_update'),
     path('post_edit/<int:pk>', PostEdit.as_view(), name='post_edit'),
+    path('post_delete/<int:pk>', deletefunc, name='post_delete'),
     path('my_page/<int:pk>', mypagefunk, name='my_page'),
     path('toppage', PostList.as_view(), name='toppage'),
-    path('like/<int:user_id>/<int:post_id>', likefunc, name='like'),
+    path('like/', likefunc, name='like'),
 ]

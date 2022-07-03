@@ -4,7 +4,7 @@
     {% for item in post_list %}
     <div class="card" style="width: 18rem;">
         <div class="card-body">
-          <p><a href="{% url 'user_detail' pk=item.user.id %}">{{ item.user.username }}</a></p>{% include 'follow.html' %}
+          <p><a href="{% url 'user_detail' pk=item.user.id %}">{{ item.user.username }}</a></p>
           <h5 class="card-title">{{ item.categories }}</h5>
           <p class="card-text">{{ item.text }} {% include 'like.html' %}</p>
         </div>

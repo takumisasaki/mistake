@@ -1,5 +1,5 @@
-<form action="{% url 'follow' pk=item.user.id %}" method="POST">
+<form action="{% url 'follow' pk=detail_user.id %}" method="POST">
     {% csrf_token %}
-    <input type="hidden" name='user' value='{{ item.user.id }}'>
-    <input type="submit" value='フォローする'>
+    <input type="hidden" name='user' value='{{ detail_user }}'>
+    <input type="submit" id="follow" value='フォローする'>
 </form>

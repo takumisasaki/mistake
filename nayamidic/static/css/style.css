@@ -6,3 +6,18 @@ li{
     color: white;
     text-align: left;
 }
+
+.card{
+    text-align: center;
+}
+
+.p-40 {
+    padding: 100px, 300px, 100px, 300px;
+}
+
+.d-fle {
+    display: revert;
+}
+/* .header-top {
+    position:fixed;
+} */

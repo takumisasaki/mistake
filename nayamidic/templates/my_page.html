@@ -11,8 +11,14 @@
     <main class="form-signin">
         {{ user.get_username }}<br /><br />
         {% for item in model%}
-            {{ item.categories }}<br /><br />
-            {{ item.text }}
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+              <p>{{ item.user.username }}</p>
+              <h5 class="card-title">{{ item.categories }}</h5>
+              <p class="card-text">{{ item.text }}</p>
+              いいね：{{ item.like_count }}
+            </div>
+          </div>
             <p><a href="{% url 'post_edit' item.pk %}">{{ item.pk }}</a></p>
         {% endfor %}
     </main>    

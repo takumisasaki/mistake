@@ -74,16 +74,8 @@ class like(models.Model):
     post_id = models.ForeignKey(Post, on_delete=models.DO_NOTHING)
     like_flag = models.BooleanField(default=False)
     
-
-# class List(models.Model):
-#     author = models.ForeignKey(User, on_delete=models.CASCADE)
-#     post = models.TextField(max_length=255)
-#     post_created = models.DateTimeField(help_text='作成日時')
-
-# class Like(models.Model):
-#     post = models.ForeignKey(List, on_delete=models.CASCADE)
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
-
+class Follow(models.Model):
+    followed = models.ForeignKey(User, related_name='followed', on_delete=models.CASCADE)
+    following = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+    date_created = models.DateTimeField(auto_now_add=True)
 

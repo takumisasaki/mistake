@@ -1,7 +1,7 @@
 from django.urls import path
 # from .views import signupfunk
 from . import views
-from .views import HomeView, PostCreate, Signup, Login, Logout, PostView, UserUpdate, PostEdit, PostList, deletefunc , mypagefunk, likefunc
+from .views import FollowView, HomeView, PostCreate, Signup, Login, Logout, PostView, UserUpdate, PostEdit, PostList, UserDetail, deletefunc , mypagefunk, likefunc
 
 
 urlpatterns = [
@@ -17,4 +17,6 @@ urlpatterns = [
     path('my_page/<int:pk>', mypagefunk, name='my_page'),
     path('toppage', PostList.as_view(), name='toppage'),
     path('like/', likefunc, name='like'),
+    path('follow/<int:pk>', FollowView.as_view(), name="follow"),
+    path('user_detail/<int:pk>', UserDetail.as_view(), name="user_detail"),
 ]

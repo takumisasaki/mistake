@@ -4,12 +4,13 @@ import this
 from urllib import request
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from django.views.generic import DetailView, CreateView, TemplateView, ListView, UpdateView, FormView
+from django.views import View
+from django.views.generic import DetailView, CreateView, TemplateView, ListView, UpdateView, FormView, View
 from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from pkg_resources import resource_stream
-from .models import Post, like, User as user
+from .models import Post, Follow, like, User as user
 from .forms import LoginForm, SignupForm, PostForm, UserUpdateForm, PostEditForm
 from django.db import IntegrityError
 from django.urls import reverse_lazy, reverse
@@ -91,9 +92,7 @@ class PostEdit(LoginRequiredMixin, UpdateView):
 def deletefunc(request, pk):
     if request.method == 'POST':
         target_post = Post.objects.filter(pk=pk).get(delete_flag=0)
-        print(target_post)
         target_post.delete_flag = 1
-        print(target_post)
         target_post.save()
         model = list(Post.objects.filter(user=pk, delete_flag=0).all())
         return render(request, 'my_page.html', {'model':model})
@@ -110,6 +109,7 @@ class PostList(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['post_list'] = Post.objects.all()
+        context['count'] = Follow.objects.values('followed')
         return context
 
 
@@ -134,13 +134,44 @@ def likefunc(request):
             'post_id':post_box.id,
             'like_count':post_box.like_count
         }
-        print(context)
         if request.is_ajax():
             return JsonResponse(context)
         return render(request, 'toppage.html', context)
 
+class FollowView(View):
+    template_name = 'follow.html'
+    model = Follow
+    def post(self, request, pk):
+        if request.method == 'POST':
+            print(request)
+            target_pk = pk
+            obj = user.objects.get(pk=target_pk)
+            # print(type(target_pk),target_pk)
+            # print(type(target_pk),'----------------------',type(request.user))
+            model = Follow.objects.filter(followed=target_pk, following=request.user)
+            print(model.count())
+            if model.count() == 0:
+                follow_table = Follow()
+                follow_table.followed = obj
+                follow_table.following = request.user
+                follow_table.save()
+            else:
+                model.delete()
+        return render(request, 'toppage.html')
 
+class UserDetail(LoginRequiredMixin, ListView):
+    template_name = 'user_detail.html'
+    model = User
 
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        followed_count = Follow.objects.filter(followed=self.kwargs['pk']).count()
+        following_count = Follow.objects.filter(following=self.kwargs['pk']).count()
+        detail_user = user.objects.get(pk=self.kwargs['pk'])
+        context['followed'] = followed_count
+        context['followind'] = following_count
+        context['post'] = Post.objects.filter(user=self.kwargs['pk'])
+        context['detail_user'] = detail_user
 
-
+        return context
 

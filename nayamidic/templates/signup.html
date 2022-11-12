@@ -10,7 +10,7 @@
 <body class="text-center">    
     <main class="form-signin">
         {{ error }}<br /><br />
-        <form method="POST">{% csrf_token %}
+        <form method="POST" enctype="multipart/form-data">{% csrf_token %}
         <p> {{ form }} </p>
            <!-- <p> nickname:{{ form.nickname }} </p> -->
             <!-- <p> password:{{ form.password }} </p> -->

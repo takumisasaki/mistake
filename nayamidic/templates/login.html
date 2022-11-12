@@ -9,16 +9,21 @@
 {% block content %}
 <body class="text-center">
     <main class="form-signin">
-        <form method="POST">{% csrf_token %}
-            {{ context }}
-            <h1 class="h3 mb-3 fw-normal">Please log in</h1>
-            {{ form.non_field_errors }}
-            {% for field in form %}
-            {{ field }}
-            {{ field.errors }}
-            {% endfor %}
-            <br /><br />
-            <button type="submit" class="btn btn-primary">log in</button><br /> <br />
+        {{ context }}
+        <div class="login">
+            <div class="login-triangle"></div>
+            
+            <h2 class="login-header">Log in</h2>
+            
+            <form method="POST" class="login-container">{% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                {{ field }}
+                {{ field.errors }}
+                {% endfor %}
+                <p><input type="submit" value="Log in"></p>
+            </form>
+        </div>
             <p><a href="{% url 'signup' %}">新規登録</a></p>
         </form>
     </main>    

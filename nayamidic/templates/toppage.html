@@ -1,16 +1,20 @@
 {% extends 'base.html' %}
 <body>
     {% block content %}
-    {% for item in post_list %}
-    <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <p><a href="{% url 'user_detail' pk=item.user.id %}">{{ item.user.username }}</a></p>
-          <h5 class="card-title">{{ item.categories }}</h5>
-          <p class="card-text">{{ item.text }} {% include 'like.html' %}</p>
+    <div class="post_margin">
+    {% for items in post_list %}
+        {% for item in items %}
+        <div class="card container  p-30 d-fle justify-content-center" style="width: 18rem;">
+            <div class="card-body">
+                <p><a href="{% url 'user_detail' pk=item.user.id %}">{{ item.user.username }}</a></p>
+                <h5 class="card-title">{{ item.categories }}</h5>
+                <p class="card-text">{{ item.text }} {% include 'like.html' %}</p>
+            </div>
         </div>
-      </div>
-    {% endfor %}
-    <input id="like" type="button" value="button" onclick="buttonClick()">
+        {% endfor %}
+        {% endfor %}
+    </div>
+        <input id="like" type="button" value="button" onclick="buttonClick()">
     <script>
         $(document).ready(function(event){
             $(document).on('click', '#like', function(event){

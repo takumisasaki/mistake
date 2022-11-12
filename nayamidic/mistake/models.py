@@ -44,6 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(_("staff status"), default=False)
     is_active = models.BooleanField(_("active"), default=True)
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
+    image = models.ImageField(upload_to='medi/', blank=True, null=True)
     
     objects = UserManager()
     USERNAME_FIELD = 'username'
@@ -71,7 +72,7 @@ class Post(models.Model):
 
 class like(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    post_id = models.ForeignKey(Post, on_delete=models.DO_NOTHING)
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     like_flag = models.BooleanField(default=False)
     
 class Follow(models.Model):

@@ -23,7 +23,7 @@
   </head>
 
   <body>
-    <header class="header-top">
+    <header class="header-top header">
     <nav class="navbar navbar-expand-lg navbar-dark bg-purple" style="background-color: #2f0163;">
       <div class="container-fluid">
         {% if request.user.is_authenticated %}
@@ -43,6 +43,11 @@
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
               <a class="nav-link" href="{% url 'logout' %}">ログアウト</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'post_create' user.pk %}">投稿</a>
             </li>
           </ul>
           {% else %}

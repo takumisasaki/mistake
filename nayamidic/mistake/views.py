@@ -1,3 +1,4 @@
+from dataclasses import field
 from multiprocessing import context
 from re import template
 import this
@@ -16,6 +17,8 @@ from django.db import IntegrityError
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
+from django import forms
+from collections import defaultdict
 
 class Signup(CreateView):
     template_name = "signup.html"
@@ -43,10 +46,54 @@ class HomeView(LoginRequiredMixin, TemplateView):#「LoginRequiredMixin → Temp
 class Logout(LogoutView):
     template_name = 'logout.html'
 
-class PostCreate(LoginRequiredMixin, CreateView):
-    template_name = 'post_create.html'
-    form_class = PostForm
-    success_url = reverse_lazy('home')
+class PostCreate(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        form = PostForm()
+        context = {
+            'form': form
+        }
+        return render(request, 'post_create.html', context)
+    
+    def post(self, request, pk):
+        post_user = request.user
+        categories = request.POST.get('categories')
+        text = request.POST.get('text')
+        post_create = Post()
+        post_create.user = post_user
+        post_create.categories = categories
+        post_create.text = text
+        post_create.save()
+        return render(request, 'home.html')
+
+class PostEdit(LoginRequiredMixin, FormView):
+    template_name = 'post_edit.html'
+    form_class = PostEditForm
+    model = Post
+
+    def form_valid(self, form):
+        # print(form)
+        form.update(form)
+        return super().form_valid(form)
+    
+    def get_form_kwargs(self, *args, **kwargs):
+        kwgs = super().get_form_kwargs(*args, **kwargs)
+        kwgs["pk"] = self.kwargs['pk']
+        kwgs['user'] = self.request.user
+        kwgs['categories'] = Post.objects.filter(id=kwgs["pk"]).all()
+        return kwgs
+
+    def get_success_url(self):
+        return reverse('my_page', kwargs={'pk': self.request.user.id })
+
+def deletefunc(request, pk):
+    if request.method == 'POST':
+        target_post = Post.objects.filter(pk=pk).get(delete_flag=0)
+        target_post.delete_flag = 1
+        target_post.save()
+        id = request.user.id
+        model = list(Post.objects.filter(user=id, delete_flag=0).all())
+        print(id)
+        return render(request, 'my_page.html', {'model':model, 'pk':pk})
 
 class PostView(LoginRequiredMixin, ListView):
     template_name = 'post_view.html'
@@ -77,30 +124,12 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
                 print("重複してんだよこの野郎")
         return reverse('user_update', kwargs={'pk': self.kwargs.get('pk')})
 
-class PostEdit(LoginRequiredMixin, UpdateView):
-    template_name = 'post_edit.html'
-    form_class = PostEditForm
-    model = Post
 
-    def form_valid(self, form):
-        form.update(post=self.request.user)
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('my_page', kwargs={'pk': self.request.user.id })
-
-def deletefunc(request, pk):
-    if request.method == 'POST':
-        target_post = Post.objects.filter(pk=pk).get(delete_flag=0)
-        target_post.delete_flag = 1
-        target_post.save()
-        model = list(Post.objects.filter(user=pk, delete_flag=0).all())
-        return render(request, 'my_page.html', {'model':model})
-        #  kwargs={'pk': request.user.id }
 
 def mypagefunk(request, pk):
     model = list(Post.objects.filter(user=pk, delete_flag=0).all())
-    return render(request, 'my_page.html', {'model':model})
+    iam = user.objects.get(pk=pk)
+    return render(request, 'my_page.html', {'model':model, 'iam':iam })
 
 class PostList(LoginRequiredMixin, TemplateView):
     template_name = 'toppage.html'
@@ -108,15 +137,18 @@ class PostList(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['post_list'] = Post.objects.all()
+        followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
+        context['post_list'] = []
+        for i in range(len(followed_user)):
+            context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
         context['count'] = Follow.objects.values('followed')
+        print(context)
         return context
 
 
 def likefunc(request):
     if request.method == 'POST':
         post_id = request.POST.get('post_id')
-        print(post_id)
         model = like.objects.filter(user_id=request.user,  post_id=post_id)
         post_box = Post.objects.get(pk=post_id)
         if model.count() == 0:
@@ -129,7 +161,6 @@ def likefunc(request):
         this_post = like.objects.filter(post_id=post_id).count()
         post_box.like_count = this_post
         post_box.save()
-        print(post_box.like_count)
         context = {
             'post_id':post_box.id,
             'like_count':post_box.like_count
@@ -141,10 +172,10 @@ def likefunc(request):
 class FollowView(View):
     template_name = 'follow.html'
     model = Follow
-    def post(self, request, pk):
+    def post(self, request):
         if request.method == 'POST':
             print(request)
-            target_pk = pk
+            target_pk = request.POST.get('f_user')
             obj = user.objects.get(pk=target_pk)
             # print(type(target_pk),target_pk)
             # print(type(target_pk),'----------------------',type(request.user))
@@ -157,6 +188,13 @@ class FollowView(View):
                 follow_table.save()
             else:
                 model.delete()
+            context = {
+                'target_pk' : target_pk,
+                'followed_count' : Follow.objects.filter(followed=target_pk).count(),
+                'following_count' : Follow.objects.filter(following=target_pk).count(),
+            }
+        if request.is_ajax():
+            return JsonResponse(context)
         return render(request, 'toppage.html')
 
 class UserDetail(LoginRequiredMixin, ListView):
@@ -175,3 +213,11 @@ class UserDetail(LoginRequiredMixin, ListView):
 
         return context
 
+# class SampleChoiceView(View):
+#     def get(self, request):
+#         form = SampleChoiceForm()
+#         context = {
+#             'lst': form
+#         }
+#         print(form)
+#         return render(request, 'test.html', context)

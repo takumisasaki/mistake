@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'templates/base.html' %}
 <body>
     {% block content %}
     <div class="post_margin">
@@ -8,7 +8,7 @@
             <div class="card-body">
                 <p><a href="{% url 'user_detail' pk=item.user.id %}">{{ item.user.username }}</a></p>
                 <h5 class="card-title">{{ item.categories }}</h5>
-                <p class="card-text">{{ item.text }} {% include 'like.html' %}</p>
+                <p class="card-text">{{ item.text }} {% include 'templates/like.html' %}</p>
             </div>
         </div>
         {% endfor %}

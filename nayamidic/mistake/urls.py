@@ -7,6 +7,7 @@ from .views import FollowView, HomeView, PostCreate, Signup, Login, Logout, Post
 urlpatterns = [
     path('signup/', Signup.as_view(), name='signup'),
     path('login/', Login.as_view(), name='login'),
+    path('', Login.as_view(), name='login'),
     path('home/', HomeView.as_view(), name='home'),
     path('loout/', Logout.as_view(), name='logout'),
     path('post_create/<int:pk>', PostCreate.as_view(), name='post_create'),

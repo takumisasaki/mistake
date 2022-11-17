@@ -20,8 +20,9 @@ from django.http import JsonResponse
 from django import forms
 from collections import defaultdict
 
+
 class Signup(CreateView):
-    template_name = "signup.html"
+    template_name = "templates/signup.html"
     model = user
     form_class = SignupForm
     def form_valid(self, form):
@@ -35,16 +36,30 @@ class Signup(CreateView):
     success_url = reverse_lazy('login')
 
 class Login(LoginView):
-    template_name = "login.html"
+    template_name = "templates/login.html"
     form_class = LoginForm
 
 
 class HomeView(LoginRequiredMixin, TemplateView):#「LoginRequiredMixin → TemplateView」この順番で記述しないとログイン必須機能が表れないので注意！！
-    template_name = 'home.html'
+    template_name = 'templates/home.html'
     # login_url = '/login/'
 
 class Logout(LogoutView):
-    template_name = 'logout.html'
+    template_name = 'templates/logout.html'
+
+class PostList(LoginRequiredMixin, TemplateView):
+    template_name = 'templates/toppage.html'
+    login_url = '/login/'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
+        context['post_list'] = []
+        for i in range(len(followed_user)):
+            context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
+        context['count'] = Follow.objects.values('followed')
+        print(context)
+        return context
 
 class PostCreate(LoginRequiredMixin, View):
     def get(self, request, pk):
@@ -52,9 +67,10 @@ class PostCreate(LoginRequiredMixin, View):
         context = {
             'form': form
         }
-        return render(request, 'post_create.html', context)
+        return render(request, 'templates/post_create.html', context)
     
     def post(self, request, pk):
+        print(request)
         post_user = request.user
         categories = request.POST.get('categories')
         text = request.POST.get('text')
@@ -63,10 +79,10 @@ class PostCreate(LoginRequiredMixin, View):
         post_create.categories = categories
         post_create.text = text
         post_create.save()
-        return render(request, 'home.html')
+        return redirect('toppage')
 
 class PostEdit(LoginRequiredMixin, FormView):
-    template_name = 'post_edit.html'
+    template_name = 'templates/post_edit.html'
     form_class = PostEditForm
     model = Post
 
@@ -93,10 +109,10 @@ def deletefunc(request, pk):
         id = request.user.id
         model = list(Post.objects.filter(user=id, delete_flag=0).all())
         print(id)
-        return render(request, 'my_page.html', {'model':model, 'pk':pk})
+        return render(request, 'templates/my_page.html', {'model':model, 'pk':pk})
 
 class PostView(LoginRequiredMixin, ListView):
-    template_name = 'post_view.html'
+    template_name = 'templates/post_view.html'
     model = Post
 
     def get_queryset(self, **kwargs):
@@ -112,7 +128,7 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
         form.update(user=self.request.user)
         return super().form_valid(form)
 
-    template_name = 'user_update.html'
+    template_name = 'templates/user_update.html'
     form_class = UserUpdateForm
     model = user
     
@@ -129,21 +145,7 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
 def mypagefunk(request, pk):
     model = list(Post.objects.filter(user=pk, delete_flag=0).all())
     iam = user.objects.get(pk=pk)
-    return render(request, 'my_page.html', {'model':model, 'iam':iam })
-
-class PostList(LoginRequiredMixin, TemplateView):
-    template_name = 'toppage.html'
-    login_url = '/login/'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
-        context['post_list'] = []
-        for i in range(len(followed_user)):
-            context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
-        context['count'] = Follow.objects.values('followed')
-        print(context)
-        return context
+    return render(request, 'templates/my_page.html', {'model':model, 'iam':iam })
 
 
 def likefunc(request):
@@ -167,10 +169,10 @@ def likefunc(request):
         }
         if request.is_ajax():
             return JsonResponse(context)
-        return render(request, 'toppage.html', context)
+        return render(request, 'templates/toppage.html', context)
 
 class FollowView(View):
-    template_name = 'follow.html'
+    template_name = 'templates/follow.html'
     model = Follow
     def post(self, request):
         if request.method == 'POST':
@@ -195,10 +197,10 @@ class FollowView(View):
             }
         if request.is_ajax():
             return JsonResponse(context)
-        return render(request, 'toppage.html')
+        return render(request, 'templates/toppage.html')
 
 class UserDetail(LoginRequiredMixin, ListView):
-    template_name = 'user_detail.html'
+    template_name = 'templates/user_detail.html'
     model = User
 
     def get_context_data(self, **kwargs):

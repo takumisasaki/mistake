@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'templates/base.html' %}
 {% load static %}
 
 {% block customcss %}
-<link href="{% static 'style.css' %}" rel="stylesheet">
+<link href="{% static 'static/css/style.css' %}" rel="stylesheet">
 {% endblock customcss %}
 
 
@@ -11,7 +11,7 @@
   <div class="card p-4"> 
       <div class=" image d-flex flex-column justify-content-center align-items-center"> 
           <button class="btn btn-secondary"> <img src="https://i.imgur.com/wvxPV9S.png" height="100" width="100" /></button>
-          <span class="name mt-3">{{ iam }}</span> <span class="idd">@eleanorpena</span>
+          <span class="name mt-3"><a class="nav-link" href="{% url 'user_update' user.pk %}">{{ iam }}</a></span> <span class="idd">@eleanorpena</span>
            <div class="d-flex flex-row justify-content-center align-items-center gap-2">
               </div> <div class="d-flex flex-row justify-content-center align-items-center mt-3"> <span class="number"> フォロー : <span name="following">{% autoescape off %} {{ following }} {% endautoescape %}</span> フォロワー :<span name="followed">{% autoescape off %} {{ followed }} {% endautoescape %}</span>
               </span></span> </div> 

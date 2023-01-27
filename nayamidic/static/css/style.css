@@ -87,6 +87,7 @@ li{
 
 body {
   background: #456;
+  margin: auto;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -176,3 +177,28 @@ body {
 .user_update {
     margin-top: 5rem;
 }
+
+.auth-form-body {
+  padding: 16px;
+  font-size: 14px;
+  background-color: #d0d7de;
+  border: 1px solid var(--color-border-muted);
+  border-top: 0;
+  border-radius: 8px;
+}
+
+.auth-form {
+  width: 340px;
+  margin-top: 40px;
+  margin:40px auto;
+}
+
+.px-3 {
+  padding-right: var(--base-size-16, 16px) !important;
+  padding-left: var(--base-size-16, 16px) !important;
+}
+
+.w-101 {
+  width: 95px;
+}
+

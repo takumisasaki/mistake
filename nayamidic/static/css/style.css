@@ -66,7 +66,6 @@ li{
  * 01/28/2016
  * This pen is years old, and watching at the code after all
  * those years made me fall from my chair, so I:
- * - changed all IDs to classes
  * - converted all units to pixels and em units
  * - changed all global elements to classes or children of
  *   .login

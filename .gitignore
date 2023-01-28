@@ -5,4 +5,5 @@ __pycache__/
 local_settings.py
 db.sqlite3
 media
-nayami/nayamidic/nayamidic/setting.py
+nayami/nayamidic/nayamidic/settings.py
+settings.py

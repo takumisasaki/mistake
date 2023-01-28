@@ -151,7 +151,6 @@ body {
   color: #555;
 }
 
-/* Text fields' focus effct */
 .login input[type="email"]:focus,
 .login input[type="password"]:focus {
   border-color: #888;

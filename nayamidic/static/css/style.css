@@ -66,7 +66,6 @@ li{
  * 01/28/2016
  * This pen is years old, and watching at the code after all
  * those years made me fall from my chair, so I:
- * - changed all IDs to classes
  * - converted all units to pixels and em units
  * - changed all global elements to classes or children of
  *   .login
@@ -82,11 +81,12 @@ li{
  * - no frameworks, preprocessors or resets
  */
 
-/* 'Open Sans' font from Google Fonts */
+
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
 
 body {
   background: #456;
+  margin: auto;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -151,10 +151,6 @@ body {
   color: #555;
 }
 
-<<<<<<< ours
-/* Text fields' focus effect */
-=======
->>>>>>> theirs
 .login input[type="email"]:focus,
 .login input[type="password"]:focus {
   border-color: #888;
@@ -179,3 +175,28 @@ body {
 .user_update {
     margin-top: 5rem;
 }
+
+.auth-form-body {
+  padding: 16px;
+  font-size: 14px;
+  background-color: #d0d7de;
+  border: 1px solid var(--color-border-muted);
+  border-top: 0;
+  border-radius: 8px;
+}
+
+.auth-form {
+  width: 340px;
+  margin-top: 40px;
+  margin:40px auto;
+}
+
+.px-3 {
+  padding-right: var(--base-size-16, 16px) !important;
+  padding-left: var(--base-size-16, 16px) !important;
+}
+
+.w-101 {
+  width: 95px;
+}
+

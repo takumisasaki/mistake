@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container  p-30 d-fle justify-content-center" style="max-width: 500px;">
+    <div class="card p-4"> 
+        <div class=" image d-flex flex-column justify-content-center align-items-center"> 
+            <button class="btn btn-secondary"> <img src="https://i.imgur.com/wvxPV9S.png" height="100" width="100" /></button> <p>{% include 'follow.html' %}</p>
+            <span class="name mt-3">{{ detail_user }}</span> <span class="idd">@eleanorpena</span>
+             <div class="d-flex flex-row justify-content-center align-items-center gap-2">
+                </div> <div class="d-flex flex-row justify-content-center align-items-center mt-3"> <span class="number"> フォロー : <span name="following">{% autoescape off %} {{ following }} {% endautoescape %}</span> フォロワー :<span name="followed">{% autoescape off %} {{ followed }} {% endautoescape %}</span>
+                </span></span> </div> 
+                <div class=" d-flex mt-2">  </div> <div class="gap-3 mt-3 icons d-flex flex-row justify-content-center align-items-center"> <span><i class="fa fa-twitter"></i></span> <span><i class="fa fa-facebook-f"></i></span> <span><i class="fa fa-instagram"></i></span> <span><i class="fa fa-linkedin"></i></span> </div>  </div> </div>
+</div>
+{% for item in  post %}
+<div class="card bg-light mb-30 mx-auto " style="max-width: 468px;">
+    <div class="card-header">{{ item.categories }}</div>
+    <div class="card-body">
+      <p class="card-text">{{ item.text }}</p>
+    </div>
+  </div>
+{% endfor %}
+
+<script>
+    $(document).ready(function(event){
+        $(document).on('click', '#follow', function(event){
+            let f_user = $(this).attr('name')
+            console.log(f_user)
+            event.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'follow' %}" ,
+                data: {
+                    'f_user': $(this).attr('name'),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                    dataType: 'json',
+                    success: function(response){
+                        selector2 = document.getElementsByName("followed");
+                        $(selector2).text(response.followed_count);
+                        selector3 = document.getElementsByName("following");
+                        $(selector3).text(response.following_count);
+                    }
+                });
+            });
+        });
+        </script>
+
+{% endblock content %}

@@ -1,0 +1,31 @@
+{% extends 'templates/base.html' %}
+
+{% load static %}
+
+{% block customcss %}
+<link href="{% static 'static/css/style.css' %}" rel="stylesheet">
+{% endblock customcss %}
+
+{% block content %}
+<body class="text-center">
+    <main class="form-signin">
+        {{ context }}
+        <div class="login">
+            <div class="login-triangle"></div>
+            
+            <h2 class="login-header">Log in</h2>
+            
+            <form method="POST" class="login-container">{% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                {{ field }}
+                {{ field.errors }}
+                {% endfor %}
+                <p><input type="submit" value="Log in"></p>
+            </form>
+        </div>
+            <p><a href="{% url 'signup' %}">新規登録</a></p>
+        </form>
+    </main>    
+</body>
+{% endblock content %}

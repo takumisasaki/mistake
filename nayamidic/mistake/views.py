@@ -47,18 +47,19 @@ class HomeView(LoginRequiredMixin, TemplateView):#「LoginRequiredMixin → Temp
 class Logout(LogoutView):
     template_name = 'templates/logout.html'
 
-class PostList(LoginRequiredMixin, TemplateView):
+class PostList(TemplateView):
     template_name = 'templates/toppage.html'
     login_url = '/login/'
-
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
         context['post_list'] = []
-        for i in range(len(followed_user)):
-            context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
-        context['count'] = Follow.objects.values('followed')
-        print(context)
+        if(self.request.user.id == None):
+            pass
+        else:
+            context = super().get_context_data(**kwargs)
+            followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
+            for i in range(len(followed_user)):
+                context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
+            context['count'] = Follow.objects.values('followed')
         return context
 
 class PostCreate(LoginRequiredMixin, View):

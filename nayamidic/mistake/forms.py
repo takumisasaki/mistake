@@ -10,7 +10,12 @@ from django.contrib.auth import authenticate, login, logout
 class SignupForm(UserCreationForm):
     class Meta:
         model = user
-        fields = ('username', 'email', 'password1', 'password2', 'image')
+        fields = ('username', 'email', 'password1', 'password2')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs["class"] = "user_creation_form"
 
 class LoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):

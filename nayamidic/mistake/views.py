@@ -51,15 +51,18 @@ class PostList(TemplateView):
     template_name = 'templates/toppage.html'
     login_url = '/login/'
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['post_list'] = []
-        if(self.request.user.id == None):
-            pass
+        #ログインしていない場合、もしくはフォロー数が０の場合は最新の投稿を表示する。ログインしていてフォロー数が１以上の場合はフォローしているユーザーの投稿を表示する。
+        if(self.request.user.id == None) or len(list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))) == 0:
+            context['post_list'].append(Post.objects.all().order_by('-created_at'))
+            for i in context['post_list']:
+                print(i)
         else:
-            context = super().get_context_data(**kwargs)
             followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
             for i in range(len(followed_user)):
                 context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
-            context['count'] = Follow.objects.values('followed')
+                context['count'] = Follow.objects.values('followed')
         return context
 
 class PostCreate(LoginRequiredMixin, View):
@@ -203,8 +206,10 @@ class FollowView(View):
 class UserDetail(LoginRequiredMixin, ListView):
     template_name = 'templates/user_detail.html'
     model = User
-
+    #------------------------ここから編集-----------------------------
     def get_context_data(self, **kwargs):
+        if detail_user.pk == self.request.user.pk:
+            pass
         context =  super().get_context_data(**kwargs)
         followed_count = Follow.objects.filter(followed=self.kwargs['pk']).count()
         following_count = Follow.objects.filter(following=self.kwargs['pk']).count()

@@ -204,8 +204,9 @@ body {
 }
 
 .user_creation_form {
-  display: inline-block;
+  display: flex;
   width: 300px;
+  margin: auto;
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
   font-weight: 400;

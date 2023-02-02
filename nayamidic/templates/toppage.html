@@ -6,7 +6,11 @@
         {% for item in items %}
         <div class="card container  p-30 d-fle justify-content-center" style="width: 18rem;">
             <div class="card-body">
+                {% if item.user.id != user.id %}
                 <p><a href="{% url 'user_detail' pk=item.user.id %}">{{ item.user.username }}</a></p>
+                {% else %}
+                <p><a href="{% url 'my_page' pk=item.user.id %}">{{ item.user.username }}</a></p>
+                {% endif %}
                 <h5 class="card-title">{{ item.categories }}</h5>
                 <p class="card-text">{{ item.text }} {% include 'templates/like.html' %}</p>
             </div>

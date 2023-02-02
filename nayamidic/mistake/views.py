@@ -53,8 +53,10 @@ class PostList(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['post_list'] = []
-        #ログインしていない場合、もしくはフォロー数が０の場合は最新の投稿を表示する。ログインしていてフォロー数が１以上の場合はフォローしているユーザーの投稿を表示する。
-        if(self.request.user.id == None) or len(list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))) == 0:
+        #ログインしていない場合 or フォロー数が０の場合 or フォローしているユーザーの総投稿数が０の場合は最新の投稿を表示する
+        # ログインしていてフォローしているユーザいる＆投稿数が１以上の場合はフォローしているユーザーの投稿を表示する。
+        if(self.request.user.id == None) or len(list(Follow.objects.filter(following=self.request.user)\
+            .values_list('followed', flat=True))) == 0:
             context['post_list'].append(Post.objects.all().order_by('-created_at'))
             for i in context['post_list']:
                 print(i)
@@ -149,7 +151,9 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
 def mypagefunk(request, pk):
     model = list(Post.objects.filter(user=pk, delete_flag=0).all())
     iam = user.objects.get(pk=pk)
-    return render(request, 'templates/my_page.html', {'model':model, 'iam':iam })
+    followed = Follow.objects.filter(followed_id=pk).all().count()
+    following = Follow.objects.filter(following_id=pk).all().count()
+    return render(request, 'templates/my_page.html', {'model':model, 'iam':iam, 'followed':followed, 'following':following })
 
 
 def likefunc(request):
@@ -183,8 +187,8 @@ class FollowView(View):
             print(request)
             target_pk = request.POST.get('f_user')
             obj = user.objects.get(pk=target_pk)
-            # print(type(target_pk),target_pk)
-            # print(type(target_pk),'----------------------',type(request.user))
+            # followed = フォローされたほう
+            # following = フォローしたほう
             model = Follow.objects.filter(followed=target_pk, following=request.user)
             print(model.count())
             if model.count() == 0:
@@ -206,10 +210,7 @@ class FollowView(View):
 class UserDetail(LoginRequiredMixin, ListView):
     template_name = 'templates/user_detail.html'
     model = User
-    #------------------------ここから編集-----------------------------
     def get_context_data(self, **kwargs):
-        if detail_user.pk == self.request.user.pk:
-            pass
         context =  super().get_context_data(**kwargs)
         followed_count = Follow.objects.filter(followed=self.kwargs['pk']).count()
         following_count = Follow.objects.filter(following=self.kwargs['pk']).count()

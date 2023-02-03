@@ -39,7 +39,6 @@ class Login(LoginView):
     template_name = "templates/login.html"
     form_class = LoginForm
 
-
 class HomeView(LoginRequiredMixin, TemplateView):#「LoginRequiredMixin → TemplateView」この順番で記述しないとログイン必須機能が表れないので注意！！
     template_name = 'templates/home.html'
     # login_url = '/login/'
@@ -66,6 +65,8 @@ class PostList(TemplateView):
                 context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
                 context['count'] = Follow.objects.values('followed')
         return context
+    
+    
 
 class PostCreate(LoginRequiredMixin, View):
     def get(self, request, pk):
@@ -146,8 +147,6 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
                 print("重複してんだよこの野郎")
         return reverse('user_update', kwargs={'pk': self.kwargs.get('pk')})
 
-
-
 def mypagefunk(request, pk):
     model = list(Post.objects.filter(user=pk, delete_flag=0).all())
     iam = user.objects.get(pk=pk)
@@ -221,12 +220,3 @@ class UserDetail(LoginRequiredMixin, ListView):
         context['detail_user'] = detail_user
 
         return context
-
-# class SampleChoiceView(View):
-#     def get(self, request):
-#         form = SampleChoiceForm()
-#         context = {
-#             'lst': form
-#         }
-#         print(form)
-#         return render(request, 'test.html', context)

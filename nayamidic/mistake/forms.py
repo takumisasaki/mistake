@@ -49,13 +49,12 @@ class UserUpdateForm(forms.ModelForm):
 
     def __init__(self, username=None, nickname=None, email=None, *args, **kwargs):
         kwargs.setdefault('label_suffix', '')
-        check = user.objects.values('username') 
-        for i in range(len(check)):
-            for j in check[i].values():
-                print(j)
+        check = user.objects.values('username')
         super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs["class"] = "user_creation_form"
+
         
-    
     def update(self, user):
         print(user,'---------')
         user.email = self.cleaned_data['email']

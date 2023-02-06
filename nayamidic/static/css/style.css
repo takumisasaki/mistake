@@ -1,3 +1,4 @@
+/* env\Scripts\Activate.ps1 */
 li{
     list-style:none;
     text-align: left;
@@ -66,6 +67,7 @@ li{
  * 01/28/2016
  * This pen is years old, and watching at the code after all
  * those years made me fall from my chair, so I:
+ * - changed all IDs to classes
  * - converted all units to pixels and em units
  * - changed all global elements to classes or children of
  *   .login
@@ -81,12 +83,11 @@ li{
  * - no frameworks, preprocessors or resets
  */
 
-
+/* 'Open Sans' font from Google Fonts */
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
 
 body {
   background: #456;
-  margin: auto;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -151,6 +152,7 @@ body {
   color: #555;
 }
 
+/* Text fields' focus effect */
 .login input[type="email"]:focus,
 .login input[type="password"]:focus {
   border-color: #888;
@@ -173,11 +175,12 @@ body {
 }
 
 .user_update {
-    margin-top: 5rem;
+    margin-top: 1rem;
 }
-
+/* signup.html */
 .auth-form-body {
   padding: 16px;
+  text-align: center;
   font-size: 14px;
   background-color: #d0d7de;
   border: 1px solid var(--color-border-muted);
@@ -186,7 +189,7 @@ body {
 }
 
 .auth-form {
-  width: 340px;
+  width: 420px;
   margin-top: 40px;
   margin:40px auto;
 }
@@ -198,5 +201,25 @@ body {
 
 .w-101 {
   width: 95px;
+  height: 40px;
+}
+
+.user_creation_form {
+  display: flex;
+  width: 300px;
+  margin: auto;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 0.25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 

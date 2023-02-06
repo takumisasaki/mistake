@@ -1,0 +1,19 @@
+{% extends 'templates/base.html' %}
+{% load static %}
+
+{% block customcss %}
+<link href="{% static 'static/css/style.css' %}" rel="stylesheet">
+{% endblock customcss %}
+
+
+{% block content %}
+<body class="text-center">    
+    <div class="card container  p-30 d-fle justify-content-center" style="width: 18rem;">
+    {% for post in  object_list %}
+            <div class="card-body">
+                {{ post }}          
+            {% endfor %}
+        </div>
+    </div>
+</body>
+{% endblock content %}

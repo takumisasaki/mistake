@@ -5,47 +5,27 @@
 <link href="{% static 'static/css/style.css' %}" rel="stylesheet">
 {% endblock customcss %}
 
-
 {% block content %}
 <div class="container  p-30 d-fle justify-content-center" style="max-width: 500px;">
     <div class="card p-4"> 
         <div class=" image d-flex flex-column justify-content-center align-items-center"> 
-            <button class="btn btn-secondary"> <img src="https://i.imgur.com/wvxPV9S.png" height="100" width="100" /></button> <p>{% include 'templates/follow.html' %}</p>
+            <button class="btn btn-secondary"> <img src="https://i.imgur.com/wvxPV9S.png" height="100" width="100" /></button>
             <span class="name mt-3">{{ detail_user }}</span> <span class="idd">@eleanorpena</span>
              <div class="d-flex flex-row justify-content-center align-items-center gap-2">
-                </div> <div class="d-flex flex-row justify-content-center align-items-center mt-3"> <span class="number"> フォロー : <span name="following">{% autoescape off %} {{ following }} {% endautoescape %}</span> フォロワー :<span name="followed">{% autoescape off %} {{ followed }} {% endautoescape %}</span>
+                </div> <div class="d-flex flex-row justify-content-center align-items-center mt-3">
                 </span></span> </div> 
                 <div class=" d-flex mt-2">  </div> <div class="gap-3 mt-3 icons d-flex flex-row justify-content-center align-items-center"> <span><i class="fa fa-twitter"></i></span> <span><i class="fa fa-facebook-f"></i></span> <span><i class="fa fa-instagram"></i></span> <span><i class="fa fa-linkedin"></i></span> </div>  </div> </div>
 </div>
-{% for item in  post %}
-<div class="card bg-light mb-30 mx-auto " style="max-width: 468px;">
-    <div class="card-header">{{ item.categories }}</div>
-    <div class="card-body">
-      <p class="card-text">{{ item.text }}</p>
-    </div>
-  </div>
-  {% endfor %}
-<body class="text-center">    
-    <main class="form-signin">
-        {{ user.get_username }}
-        <ul>
-            {% for error in form.username.errors %}
-            <li>
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                  </div>
-            </li>
-            {% endfor %}
-        </ul>
-        <form class="user_update" action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
-            <input type="hidden" name='id' value='{{ user.pk }}'>
-            <p> {{ form.id }} </p>
-            <p>名前:{{ form.username }}</p>
-            <p>ニックネーム:{{ form.nickname }}</p>
-            <p>メールアドレス:{{ form.email }}</p>
-            <img src="/{{ form.image.url }}" width="100" height="100"/>
-            <input type="submit" value='userupdate'>
-        </form>
+
+    <input type="hidden" name='id' value='{{ user.pk }}'>
+        <div class="auth-form px-3">
+            <div class="auth-form-body mt-3">
+                <form class="user_update" action="" method="POST" enctype="multipart/form-data">{% csrf_token %}
+                    <p class="signup-input-form"> {{ form }} </p>
+                    <input type="submit" value='userupdate'>
+                </form>
+                </div>
+            </div>
     </main>    
 </body>
 {% endblock content %}

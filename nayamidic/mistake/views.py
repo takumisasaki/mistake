@@ -19,6 +19,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django import forms
 from collections import defaultdict
+from django.db.models import Q 
 
 
 class Signup(CreateView):
@@ -30,15 +31,14 @@ class Signup(CreateView):
         queryset = user.objects.values('username')
         for i in queryset:
             if username == i:
-                print("被ってるよ")
+                print("重複してます。")
                 return redirect('signup')
         return super().form_valid(form)
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('toppage')
 
 class Login(LoginView):
     template_name = "templates/login.html"
     form_class = LoginForm
-
 
 class HomeView(LoginRequiredMixin, TemplateView):#「LoginRequiredMixin → TemplateView」この順番で記述しないとログイン必須機能が表れないので注意！！
     template_name = 'templates/home.html'
@@ -47,20 +47,39 @@ class HomeView(LoginRequiredMixin, TemplateView):#「LoginRequiredMixin → Temp
 class Logout(LogoutView):
     template_name = 'templates/logout.html'
 
-class PostList(LoginRequiredMixin, TemplateView):
+class PostList(TemplateView):
     template_name = 'templates/toppage.html'
     login_url = '/login/'
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
         context['post_list'] = []
-        for i in range(len(followed_user)):
-            context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
-        context['count'] = Follow.objects.values('followed')
-        print(context)
+        #ログインしていない場合 or フォロー数が０の場合 or フォローしているユーザーの総投稿数が０の場合は最新の投稿を表示する
+        # ログインしていてフォローしているユーザいる＆投稿数が１以上の場合はフォローしているユーザーの投稿を表示する。
+        if(self.request.user.id == None) or len(list(Follow.objects.filter(following=self.request.user)\
+            .values_list('followed', flat=True))) == 0:
+            context['post_list'].append(Post.objects.all().order_by('-created_at'))
+            for i in context['post_list']:
+                print(i)
+        else:
+            followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
+            for i in range(len(followed_user)):
+                context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
+                context['count'] = Follow.objects.values('followed')
         return context
 
+class SearchListView(ListView):
+    template_name = 'templates/post_search.html'
+    model = Post
+    def get_queryset(self, **kwargs):
+        queryset = super().get_queryset(**kwargs)
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(categories__icontains=query) | Q(text__icontains=query)
+            )
+
+        return queryset.order_by('-created_at')
+        
 class PostCreate(LoginRequiredMixin, View):
     def get(self, request, pk):
         form = PostForm()
@@ -70,7 +89,6 @@ class PostCreate(LoginRequiredMixin, View):
         return render(request, 'templates/post_create.html', context)
     
     def post(self, request, pk):
-        print(request)
         post_user = request.user
         categories = request.POST.get('categories')
         text = request.POST.get('text')
@@ -137,15 +155,15 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
         queryset = user.objects.values('username')
         for i in zip(queryset):
             if self.request.user == i:
-                print("重複してんだよこの野郎")
+                print("重複してます。")
         return reverse('user_update', kwargs={'pk': self.kwargs.get('pk')})
-
-
 
 def mypagefunk(request, pk):
     model = list(Post.objects.filter(user=pk, delete_flag=0).all())
     iam = user.objects.get(pk=pk)
-    return render(request, 'templates/my_page.html', {'model':model, 'iam':iam })
+    followed = Follow.objects.filter(followed_id=pk).all().count()
+    following = Follow.objects.filter(following_id=pk).all().count()
+    return render(request, 'templates/my_page.html', {'model':model, 'iam':iam, 'followed':followed, 'following':following })
 
 
 def likefunc(request):
@@ -179,8 +197,8 @@ class FollowView(View):
             print(request)
             target_pk = request.POST.get('f_user')
             obj = user.objects.get(pk=target_pk)
-            # print(type(target_pk),target_pk)
-            # print(type(target_pk),'----------------------',type(request.user))
+            # followed = フォローされたほう
+            # following = フォローしたほう
             model = Follow.objects.filter(followed=target_pk, following=request.user)
             print(model.count())
             if model.count() == 0:
@@ -202,7 +220,6 @@ class FollowView(View):
 class UserDetail(LoginRequiredMixin, ListView):
     template_name = 'templates/user_detail.html'
     model = User
-
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         followed_count = Follow.objects.filter(followed=self.kwargs['pk']).count()
@@ -214,12 +231,3 @@ class UserDetail(LoginRequiredMixin, ListView):
         context['detail_user'] = detail_user
 
         return context
-
-# class SampleChoiceView(View):
-#     def get(self, request):
-#         form = SampleChoiceForm()
-#         context = {
-#             'lst': form
-#         }
-#         print(form)
-#         return render(request, 'test.html', context)

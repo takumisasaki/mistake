@@ -1,0 +1,23 @@
+{% extends 'templates/base.html' %}
+{% load static %}
+
+{% block customcss %}
+<link href="{% static 'static/css/style.css' %}" rel="stylesheet">
+{% endblock customcss %}
+
+
+{% block content %}
+    {% for post in  object_list %}
+    <div class="card_">
+        <div class="card__imgframe"></div>
+        <div class="card__textbox">
+          <div class="card__titletext">
+            {{ post.categories }}
+          </div>
+          <div class="card__overviewtext">
+            {{ post.text }}
+          </div>
+        </div>
+      </div>       
+            {% endfor %}
+{% endblock content %}

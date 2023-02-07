@@ -19,6 +19,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django import forms
 from collections import defaultdict
+from django.db.models import Q 
 
 
 class Signup(CreateView):
@@ -30,10 +31,10 @@ class Signup(CreateView):
         queryset = user.objects.values('username')
         for i in queryset:
             if username == i:
-                print("被ってるよ")
+                print("重複してます。")
                 return redirect('signup')
         return super().form_valid(form)
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('toppage')
 
 class Login(LoginView):
     template_name = "templates/login.html"
@@ -65,9 +66,20 @@ class PostList(TemplateView):
                 context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
                 context['count'] = Follow.objects.values('followed')
         return context
-    
-    
 
+class SearchListView(ListView):
+    template_name = 'templates/post_search.html'
+    model = Post
+    def get_queryset(self, **kwargs):
+        queryset = super().get_queryset(**kwargs)
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(categories__icontains=query) | Q(text__icontains=query)
+            )
+
+        return queryset.order_by('-created_at')
+        
 class PostCreate(LoginRequiredMixin, View):
     def get(self, request, pk):
         form = PostForm()
@@ -77,7 +89,6 @@ class PostCreate(LoginRequiredMixin, View):
         return render(request, 'templates/post_create.html', context)
     
     def post(self, request, pk):
-        print(request)
         post_user = request.user
         categories = request.POST.get('categories')
         text = request.POST.get('text')
@@ -143,8 +154,6 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
         print('def get_success_url')
         queryset = user.objects.values('username')
         for i in zip(queryset):
-            if self.request.user == i:
-                print("重複してんだよこの野郎")
         return reverse('user_update', kwargs={'pk': self.kwargs.get('pk')})
 
 def mypagefunk(request, pk):

@@ -36,11 +36,13 @@
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="{% url 'my_page' user.pk %}">マイページ</a>
             </li>
-            <form method="GET" action="{% url 'post_search' %}">
-              <input name="q" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button>Search</button>
-            </form>
-          </ul>
+            <li>
+              <form id="form5" method="GET" action="{% url 'post_search' %}">
+                <input id="sbox5"  id="s" name="q" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button id="sbtn5">Search</button>
+              </form>
+            </li>
+            </ul>
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
               <a class="nav-link" href="{% url 'logout' %}">ログアウト</a>

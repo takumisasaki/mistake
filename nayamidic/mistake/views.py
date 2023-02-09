@@ -58,8 +58,6 @@ class PostList(TemplateView):
         if(self.request.user.id == None) or len(list(Follow.objects.filter(following=self.request.user)\
             .values_list('followed', flat=True))) == 0:
             context['post_list'].append(Post.objects.all().order_by('-created_at'))
-            for i in context['post_list']:
-                print(i)
         else:
             followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
             for i in range(len(followed_user)):

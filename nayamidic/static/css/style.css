@@ -54,10 +54,14 @@ li{
   background:#eee;
   color:#7fbfff;
   }
-/* 投稿カード */
+/* 投稿カード toppage.html */
 .card{
     text-align: center;
 }
+
+/* .user_a_tag {
+  position: absolute;
+} */
 
 .p-40 {
     padding: 100px, 300px, 100px, 300px;
@@ -68,7 +72,15 @@ li{
 }
 
 .p-30 {
-    padding-top: 5.5rem;
+    padding-top: 1rem;
+}
+
+.image_username {
+  text-align: left;
+}
+
+.user_a_tag {
+  vertical-align: top;
 }
 
 .mb-30 {
@@ -86,6 +98,12 @@ li{
     background-color: rgba(0,0,0,.03);
 }
 
+.card_body {
+  flex: 1 1 auto;
+  padding: 1rem 20px;
+  padding-left: 65px;
+}
+
 .card-body-create {
     flex: 1 1 auto;
     padding: 4rem 3rem;
@@ -97,7 +115,7 @@ li{
 }
 
 .post_margin{
-    margin-top:80px;
+    margin-top:auto;
 }
 
 /**

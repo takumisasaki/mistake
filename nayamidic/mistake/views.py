@@ -153,9 +153,6 @@ class UserUpdate(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         print('def get_success_url')
         queryset = user.objects.values('username')
-        for i in zip(queryset):
-            if self.request.user == i:
-                print("重複してます。")
         return reverse('user_update', kwargs={'pk': self.kwargs.get('pk')})
 
 def mypagefunk(request, pk):

@@ -7,13 +7,18 @@
 
 
 {% block content %}
-<body class="text-center">    
-    <div class="card container  p-30 d-fle justify-content-center" style="width: 18rem;">
     {% for post in  object_list %}
-            <div class="card-body">
-                {{ post }}          
-            {% endfor %}
+    <div class="card_">
+        <div class="card__imgframe"></div>
+        <div class="card__textbox">
+          <div class="card__titletext">
+            {{ post.user }}
+            {{ post.categories }}
+          </div>
+          <div class="card__overviewtext">
+            {{ post.text }}
+          </div>
         </div>
-    </div>
-</body>
+      </div>       
+            {% endfor %}
 {% endblock content %}

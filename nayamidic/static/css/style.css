@@ -81,6 +81,9 @@ li{
 
 .user_a_tag {
   vertical-align: top;
+  font-size: 22px;
+  text-decoration: unset;
+  color: #212529;
 }
 
 .mb-30 {

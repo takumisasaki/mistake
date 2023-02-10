@@ -168,6 +168,7 @@ def likefunc(request):
         post_id = request.POST.get('post_id')
         model = like.objects.filter(user_id=request.user,  post_id=post_id)
         post_box = Post.objects.get(pk=post_id)
+        bool = False
         if model.count() == 0:
             like_table = like()
             like_table.user_id = request.user
@@ -184,7 +185,7 @@ def likefunc(request):
         }
         if request.is_ajax():
             return JsonResponse(context)
-        return render(request, 'templates/toppage.html', context)
+        return render(request, 'templates/like.html', context)
 
 class FollowView(View):
     template_name = 'templates/follow.html'

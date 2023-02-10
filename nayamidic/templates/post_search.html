@@ -7,17 +7,41 @@
 
 
 {% block content %}
-    {% for post in  object_list %}
-    <div class="card_">
-        <div class="card__imgframe"></div>
-        <div class="card__textbox">
-          <div class="card__titletext">
-            {{ post.categories }}
-          </div>
-          <div class="card__overviewtext">
-            {{ post.text }}
-          </div>
-        </div>
-      </div>       
-            {% endfor %}
+    {% for item in  object_list %}
+    <div class="card container  p-30 d-fle justify-content-center" style="width: 35%;">
+      <div class="image_username">   
+          <img class="image_" src="https://i.imgur.com/wvxPV9S.png" height="60" width="60" />
+          {% if item.user.id != user.id %}
+          <a class="user_a_tag" href="{% url 'user_detail' pk=item.user.id %}">{{ item.user.username }}</a>
+          {% else %}
+          <a class="user_a_tag"  href="{% url 'my_page' pk=item.user.id %}">{{ item.user.username }}</a>
+          {% endif %}
+          <div class="card-categories">{{ item.categories }}</div>
+      </div>
+          <div class="card_body">
+              <p class="card-text">{{ item.text }} {% include 'templates/like.html' %}</p>
+      </div>
+  </div>  
+    {% endfor %}
+    <script>
+      $(document).ready(function(event){
+          $(document).on('click', '#like', function(event){
+              let post_id = $(this).attr('name')
+              event.preventDefault();
+              console.log(post_id)
+              $.ajax({
+                  type: 'POST',
+                  url: "{% url 'like' %}" ,
+                  data: {
+                      'post_id': $(this).attr('name'),
+                      'csrfmiddlewaretoken': '{{ csrf_token }}'},
+                      dataType: 'json',
+                      success: function(response){
+                          selector2 = document.getElementsByName(response.post_id + "count");
+                          $(selector2).text(response.like_count);
+                      }
+                  });
+              });
+          });
+      </script>
 {% endblock content %}

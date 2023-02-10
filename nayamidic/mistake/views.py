@@ -34,7 +34,7 @@ class Signup(CreateView):
                 print("重複してます。")
                 return redirect('signup')
         return super().form_valid(form)
-    success_url = reverse_lazy('toppage')
+    success_url = reverse_lazy('login')
 
 class Login(LoginView):
     template_name = "templates/login.html"

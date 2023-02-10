@@ -1,0 +1,10 @@
+<div class="recome_container">
+    {% for item in query %}
+    <table class="recome_table" border="1">
+        <tr>
+            <th><img class="image_" src="https://illustimage.com/photo/3681.png?20170906" height="60" width="60" />
+                <a href="{% url 'user_detail' pk=item.id %}">{{ item.username }}</a></th>
+        </tr>
+    </table>
+    {% endfor %}
+</div>

@@ -63,6 +63,7 @@ class PostList(TemplateView):
             for i in range(len(followed_user)):
                 context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
                 context['count'] = Follow.objects.values('followed')
+        context['recome_user'] = user.objects.all()[:5]
         return context
 
 class SearchListView(ListView):
@@ -159,6 +160,15 @@ def mypagefunk(request, pk):
     followed = Follow.objects.filter(followed_id=pk).all().count()
     following = Follow.objects.filter(following_id=pk).all().count()
     return render(request, 'templates/my_page.html', {'model':model, 'iam':iam, 'followed':followed, 'following':following })
+
+class RecomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'templates/recome_user.html'
+    model = user
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = user.objects.all()[:5]
+        print(context['query'])
+        return context
 
 
 def likefunc(request):

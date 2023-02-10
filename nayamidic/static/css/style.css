@@ -328,3 +328,17 @@ body {
   font-size: 12px;
   line-height: 150%;
 }
+
+/* post_search */
+/* recome_user.html */
+.recome_container {
+  position: relative;
+  top: -7300px;
+  margin-left: 60px;
+  
+  /* display: list-item; */
+}
+
+.recome_table {
+  width: 250px;
+}

@@ -10,7 +10,14 @@ from django.contrib.auth import authenticate, login, logout
 class SignupForm(UserCreationForm):
     class Meta:
         model = user
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'nickname', 'password1', 'password2')
+        labels = {
+            'username':'user_id', 
+            'nickname':'ニックネーム',
+            'email':'メールアドレス',
+            'password1':'パスワード',
+            'password2':'パスワード（確認用）'
+        }
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,13 +34,18 @@ class LoginForm(AuthenticationForm):
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = user
-        fields = ('username','nickname', 'email', 'id', 'image')
+        fields = ('username','nickname', 'id', 'image')
+        labels = {
+            'username':'user_id',
+            'nickname':'ニックネーム',
+            'id':'id',
+            'image':'image'
+        }
 
     def clean(self):
         cleaned_data = super().clean()
         username = cleaned_data.get('username')
         email = cleaned_data.get('email')
-        # print("これは送られてきたPOST"+username)
         id = self.instance.id
         name_check = user.objects.exclude(id=id).values('username')
         email_check = user.objects.exclude(id=id).values('email')

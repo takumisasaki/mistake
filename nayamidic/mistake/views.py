@@ -72,9 +72,10 @@ class SearchListView(ListView):
     def get_queryset(self, **kwargs):
         queryset = super().get_queryset(**kwargs)
         query = self.request.GET.get('q')
+        queryset = queryset.filter(delete_flag=0).all()
         if query:
             queryset = queryset.filter(
-                Q(categories__icontains=query) | Q(text__icontains=query)
+                Q(categories__icontains=query) | Q(text__icontains=query), delete_flag=0
             )
 
         return queryset.order_by('-created_at')

@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 class SignupForm(UserCreationForm):
     class Meta:
         model = user
-        fields = ('username', 'nickname' ,'email', 'password1', 'password2')
+        fields = ('username', 'nickname', 'password1', 'password2')
         labels = {
             'username':'user_id', 
             'nickname':'ニックネーム',
@@ -34,7 +34,7 @@ class LoginForm(AuthenticationForm):
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = user
-        fields = ('username','nickname', 'email', 'id', 'image')
+        fields = ('username','nickname', 'id', 'image')
 
     def clean(self):
         cleaned_data = super().clean()

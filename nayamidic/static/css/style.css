@@ -332,10 +332,10 @@ body {
 /* post_search */
 /* recome_user.html */
 .recome_container {
-  position: relative;
-  top: -7300px;
+  position:  absolute; 
+  top: 100px;
   margin-left: 60px;
-  
+
   /* display: list-item; */
 }
 

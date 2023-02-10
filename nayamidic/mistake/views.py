@@ -57,7 +57,7 @@ class PostList(TemplateView):
         # ログインしていてフォローしているユーザいる＆投稿数が１以上の場合はフォローしているユーザーの投稿を表示する。
         if(self.request.user.id == None) or len(list(Follow.objects.filter(following=self.request.user)\
             .values_list('followed', flat=True))) == 0:
-            context['post_list'].append(Post.objects.all().order_by('-created_at'))
+            context['post_list'].append(Post.objects.filter(delete_flag=0).all().order_by('-created_at'))
         else:
             followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
             for i in range(len(followed_user)):

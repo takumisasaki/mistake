@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 class SignupForm(UserCreationForm):
     class Meta:
         model = user
-        fields = ('username', 'nickname', 'password1', 'password2')
+        fields = ('username', 'nickname', 'email', 'password1', 'password2')
         labels = {
             'username':'user_id', 
             'nickname':'ニックネーム',

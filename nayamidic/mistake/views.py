@@ -29,12 +29,8 @@ class Signup(CreateView):
     def form_valid(self, form):
         username = self.request.POST.get('username')
         queryset = user.objects.values('username')
-        for i in queryset:
-            if username == i:
-                print("重複してます。")
-                return redirect('signup')
         return super().form_valid(form)
-    success_url = reverse_lazy('toppage')
+    success_url = reverse_lazy('login')
 
 class Login(LoginView):
     template_name = "templates/login.html"
@@ -57,14 +53,13 @@ class PostList(TemplateView):
         # ログインしていてフォローしているユーザいる＆投稿数が１以上の場合はフォローしているユーザーの投稿を表示する。
         if(self.request.user.id == None) or len(list(Follow.objects.filter(following=self.request.user)\
             .values_list('followed', flat=True))) == 0:
-            context['post_list'].append(Post.objects.all().order_by('-created_at'))
-            for i in context['post_list']:
-                print(i)
+            context['post_list'].append(Post.objects.filter(delete_flag=0).all().order_by('-created_at'))
         else:
             followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
             for i in range(len(followed_user)):
                 context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
                 context['count'] = Follow.objects.values('followed')
+        context['recome_user'] = user.objects.filter(~Q(id=self.request.user.id)).all()[:5]
         return context
 
 class SearchListView(ListView):
@@ -73,9 +68,10 @@ class SearchListView(ListView):
     def get_queryset(self, **kwargs):
         queryset = super().get_queryset(**kwargs)
         query = self.request.GET.get('q')
+        queryset = queryset.filter(delete_flag=0).all()
         if query:
             queryset = queryset.filter(
-                Q(categories__icontains=query) | Q(text__icontains=query)
+                Q(categories__icontains=query) | Q(text__icontains=query), delete_flag=0
             )
 
         return queryset.order_by('-created_at')
@@ -118,6 +114,17 @@ class PostEdit(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return reverse('my_page', kwargs={'pk': self.request.user.id })
+
+class LikePostView(TemplateView):
+    template_name = 'templates/like_post.html'
+    model = Post
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        num = list(like.objects.values_list('post_id',flat=True).filter(user_id=self.kwargs['pk']))
+        print(type(num), num)
+        context['post_list'] = Post.objects.filter(pk__in=num)
+        return context
+
 
 def deletefunc(request, pk):
     if request.method == 'POST':
@@ -162,13 +169,21 @@ def mypagefunk(request, pk):
     following = Follow.objects.filter(following_id=pk).all().count()
     return render(request, 'templates/my_page.html', {'model':model, 'iam':iam, 'followed':followed, 'following':following })
 
+class RecomeView(LoginRequiredMixin, TemplateView):
+    template_name = 'templates/recome_user.html'
+    model = user
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['query'] = user.objects.all()[:5]
+        print(context['query'])
+        return context
+
 
 def likefunc(request):
     if request.method == 'POST':
         post_id = request.POST.get('post_id')
         model = like.objects.filter(user_id=request.user,  post_id=post_id)
         post_box = Post.objects.get(pk=post_id)
-        bool = False
         if model.count() == 0:
             like_table = like()
             like_table.user_id = request.user
@@ -185,7 +200,7 @@ def likefunc(request):
         }
         if request.is_ajax():
             return JsonResponse(context)
-        return render(request, 'templates/like.html', context)
+        return render(request, 'templates/toppage.html', context)
 
 class FollowView(View):
     template_name = 'templates/follow.html'

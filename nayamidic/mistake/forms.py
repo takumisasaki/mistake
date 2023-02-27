@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 class SignupForm(UserCreationForm):
     class Meta:
         model = user
-        fields = ('username', 'nickname', 'password1', 'password2')
+        fields = ('username', 'nickname', 'email', 'password1', 'password2')
         labels = {
             'username':'user_id', 
             'nickname':'ニックネーム',
@@ -35,26 +35,21 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = user
         fields = ('username','nickname', 'id', 'image')
+        labels = {
+            'username':'user_id',
+            'nickname':'ニックネーム',
+            'id':'id',
+            'image':'image'
+        }
 
     def clean(self):
         cleaned_data = super().clean()
         username = cleaned_data.get('username')
-        email = cleaned_data.get('email')
-        # print("これは送られてきたPOST"+username)
         id = self.instance.id
         name_check = user.objects.exclude(id=id).values('username')
-        email_check = user.objects.exclude(id=id).values('email')
-        for i in range(len(name_check)):
-            for j in name_check[i].values():
-                if username == j:
-                    self.add_error('username', 'この名前は既に登録されています。')
-        for i in range(len(email_check)):
-            for j in email_check[i].values():
-                if email == j:
-                    self.add_error('username', 'このアドレスは既に登録されています。')
         return cleaned_data
 
-    def __init__(self, username=None, nickname=None, email=None, *args, **kwargs):
+    def __init__(self, username=None, nickname=None, *args, **kwargs):
         kwargs.setdefault('label_suffix', '')
         check = user.objects.values('username')
         super().__init__(*args, **kwargs)
@@ -64,7 +59,7 @@ class UserUpdateForm(forms.ModelForm):
         
     def update(self, user):
         print(user,'---------')
-        user.email = self.cleaned_data['email']
+        # user.email = self.cleaned_data['email']
         user.username = self.cleaned_data['username']
         user.nickname = self.cleaned_data['nickname']
         user.save()
@@ -73,11 +68,8 @@ class PostForm(forms.Form):
     categories = forms.fields.ChoiceField(
         choices = (
             ('仕事', '仕事'),
-            ('恋愛', '恋愛'),
-            ('友人関係', '友人関係'),
             ('学校', '学校'),
             ('ギャンブル', 'ギャンブル'),
-            ('詐欺', '詐欺')
         ),
         required=True,
         widget=forms.widgets.Select

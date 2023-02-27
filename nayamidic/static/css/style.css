@@ -330,3 +330,15 @@ body {
 }
 
 /* post_search */
+/* recome_user.html */
+.recome_container {
+  position:  absolute; 
+  top: 100px;
+  margin-left: 60px;
+
+  /* display: list-item; */
+}
+
+.recome_table {
+  width: 250px;
+}

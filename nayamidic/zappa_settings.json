@@ -1,0 +1,10 @@
+{
+    "dev": {
+        "django_settings": "nayamidic.settings",
+        "profile_name": null,
+        "project_name": "nayamidic",
+        "runtime": "python3.7",
+        "s3_bucket": "zappa-j620wlfvl",
+        "aws_region": "ap-northeast-1"
+    }
+}

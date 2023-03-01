@@ -30,10 +30,12 @@ SECRET_KEY = 'ytrjyr3!#%vrubko+d9xpdf283*3rkg84#u(b%dld$ve@xfyfj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'olrefgzly5.execute-api.ap-northeast-1.amazonaws.com']
 
 
 # Application definition
+aws_access_key_id = 'AKIAZLQTKUWJ374OPVPO'
+aws_secret_access_key = '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'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #'mistake.apps.MistakeConfig',
+    'rest_framework',
     'nayamidic',
     'mistake',
 ]
@@ -86,11 +89,11 @@ WSGI_APPLICATION = 'nayamidic.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgresql',
+        'NAME': 'postgres',
         'USER': 'sasakitakumi',
-        'PASSWORD': 'password',
+        'PASSWORD': 'sasakipass',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
 
     }
 }

@@ -80,17 +80,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'nayamidic.wsgi.application'
 
 
-# Database
+# Database source virtual/bin/activate
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgresql',
-        'USER': 'sasakitakumi',
+        'NAME': 'mistakedb',
+        'USER': 'postgres',
         'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '',
+        'HOST': '172.21.0.2',
+        'PORT': '5432',
 
     }
 }

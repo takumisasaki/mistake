@@ -1,7 +1,7 @@
+import boto3
 from dataclasses import field
 from multiprocessing import context
 from re import template
-import this
 from urllib import request
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
@@ -89,13 +89,33 @@ class PostCreate(LoginRequiredMixin, View):
         return render(request, 'templates/post_create.html', context)
     
     def post(self, request, pk):
+        text = request.POST.get('text')
+        utf8_string = text.encode('utf-8')
+        text = utf8_string.decode('utf-8')
+        comprehend = boto3.client(
+        'comprehend',
+        aws_access_key_id='AKIAZLQTKUWJ374OPVPO',
+        aws_secret_access_key='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',
+        region_name='ap-northeast-1'
+        )
+
+        response = comprehend.detect_sentiment(
+        Text=text,
+        LanguageCode='ja'
+        )
+
+        sentiment_score = response['SentimentScore']
+        print(response)
         post_user = request.user
         categories = request.POST.get('categories')
-        text = request.POST.get('text')
         post_create = Post()
         post_create.user = post_user
         post_create.categories = categories
         post_create.text = text
+        post_create.post_positive = sentiment_score['Positive']
+        post_create.post_negative = sentiment_score['Negative']
+        post_create.post_neutral = sentiment_score['Neutral']
+        post_create.post_mixed = sentiment_score['Mixed']
         post_create.save()
         return redirect('toppage')
 

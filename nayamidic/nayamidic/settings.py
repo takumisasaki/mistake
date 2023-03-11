@@ -86,15 +86,21 @@ WSGI_APPLICATION = 'nayamidic.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mistakedb',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
-        'HOST': '172.21.0.2',
+        'NAME': 'postgres',
+        'USER': 'sasakitakumi',
+        'PASSWORD': 'sasakipass',
+        'HOST': 'localhost',
         'PORT': '5432',
 
     }
 }
 
+# 'NAME': 'mistakedb',
+#         'USER': 'postgres',
+#         'PASSWORD': 'password',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#Docker Ver 172.21.0.2
 # os.path.join(BASE_DIR, 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

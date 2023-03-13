@@ -1,7 +1,7 @@
+import boto3
 from dataclasses import field
 from multiprocessing import context
 from re import template
-import this
 from urllib import request
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
@@ -29,6 +29,10 @@ class Signup(CreateView):
     def form_valid(self, form):
         username = self.request.POST.get('username')
         queryset = user.objects.values('username')
+        for i in queryset:
+            if username == i:
+                print("重複してます。")
+                return redirect('signup')
         return super().form_valid(form)
     success_url = reverse_lazy('login')
 
@@ -59,7 +63,7 @@ class PostList(TemplateView):
             for i in range(len(followed_user)):
                 context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
                 context['count'] = Follow.objects.values('followed')
-        context['recome_user'] = user.objects.filter(~Q(id=self.request.user.id)).all()[:5]
+        context['recome_user'] = user.objects.all()[:5]
         return context
 
 class SearchListView(ListView):
@@ -85,13 +89,33 @@ class PostCreate(LoginRequiredMixin, View):
         return render(request, 'templates/post_create.html', context)
     
     def post(self, request, pk):
+        text = request.POST.get('text')
+        utf8_string = text.encode('utf-8')
+        text = utf8_string.decode('utf-8')
+        comprehend = boto3.client(
+        'comprehend',
+        aws_access_key_id='**************',
+        aws_secret_access_key='*********************',
+        region_name='ap-northeast-1'
+        )
+
+        response = comprehend.detect_sentiment(
+        Text=text,
+        LanguageCode='ja'
+        )
+
+        sentiment_score = response['SentimentScore']
+        print(response)
         post_user = request.user
         categories = request.POST.get('categories')
-        text = request.POST.get('text')
         post_create = Post()
         post_create.user = post_user
         post_create.categories = categories
         post_create.text = text
+        post_create.post_positive = sentiment_score['Positive']
+        post_create.post_negative = sentiment_score['Negative']
+        post_create.post_neutral = sentiment_score['Neutral']
+        post_create.post_mixed = sentiment_score['Mixed']
         post_create.save()
         return redirect('toppage')
 
@@ -124,7 +148,6 @@ class LikePostView(TemplateView):
         print(type(num), num)
         context['post_list'] = Post.objects.filter(pk__in=num)
         return context
-
 
 def deletefunc(request, pk):
     if request.method == 'POST':

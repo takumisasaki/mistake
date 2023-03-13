@@ -37,6 +37,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
+
     username = models.CharField(_("username"), max_length=50, validators=[username_validator], unique=True)
     nickname = models.CharField(_("nickname"), max_length=50)
     email = models.EmailField(_("email_address"),blank=True, null=True, unique=True)
@@ -68,6 +69,10 @@ class Post(models.Model):
     updated_at = models.DateTimeField(null=True, help_text='編集済み')
     delete_flag = models.IntegerField(default=0)
     like_count = models.IntegerField(default=0)
+    post_positive = models.FloatField(null=True, default=None)
+    post_negative = models.FloatField(null=True, default=None)
+    post_neutral = models.FloatField(null=True, default=None)
+    post_mixed = models.FloatField(null=True, default=None)
 
 class like(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.DO_NOTHING)

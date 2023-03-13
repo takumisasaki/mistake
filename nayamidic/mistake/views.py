@@ -94,8 +94,8 @@ class PostCreate(LoginRequiredMixin, View):
         text = utf8_string.decode('utf-8')
         comprehend = boto3.client(
         'comprehend',
-        aws_access_key_id='**************',
-        aws_secret_access_key='*********************',
+        aws_access_key_id='AKIAZLQTKUWJ374OPVPO',
+        aws_secret_access_key='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',
         region_name='ap-northeast-1'
         )
 

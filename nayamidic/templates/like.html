@@ -1,6 +1,7 @@
 <form action="{% url 'like' %}" method="POST">
-    {% csrf_token %}
+        {% csrf_token %}
         <button id="like" name="{{ item.id }}" >いいね</button>
-</form>
-        <p name="{{ item.id }}count" class="like_count">{{ item.like_count }}</p><br /><br />
-<!-- <p name="{{article.id}}-count" class="count"> {{ article.like_set.count }} </p> -->
+        <!-- <label for="like">★</label> -->
+    </form>
+            <p name="{{ item.id }}count" class="like_count">{{ item.like_count }}</p>
+    <!-- <p name="{{article.id}}-count" class="count"> {{ article.like_set.count }} </p> -->

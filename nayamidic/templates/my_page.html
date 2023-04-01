@@ -1,20 +1,22 @@
-{% extends 'base.html' %}
+{% extends 'templates/base.html' %}
 {% load static %}
 
 {% block customcss %}
-<link href="{% static 'style.css' %}" rel="stylesheet">
+<link href="{% static 'static/css/style.css' %}" rel="stylesheet">
 {% endblock customcss %}
 
 
 {% block content %}
-<div class="container  p-30 d-fle justify-content-center" style="max-width: 500px;">
+<div class="container  p-30 d-fle justify-content-center" style="max-width: 605px;">
   <div class="card p-4"> 
       <div class=" image d-flex flex-column justify-content-center align-items-center"> 
           <button class="btn btn-secondary"> <img src="https://i.imgur.com/wvxPV9S.png" height="100" width="100" /></button>
-          <span class="name mt-3">{{ iam }}</span> <span class="idd">@eleanorpena</span>
+          <span class="name mt-3"><a class="nav-link" href="{% url 'user_update' user.pk %}"><img class="image_" src="https://thumb.ac-illust.com/6d/6d3f678d969b23dfe21de7c20cace6f5_w.jpeg" height="30" width="30" />
+            {{ iam }}</a></span>
            <div class="d-flex flex-row justify-content-center align-items-center gap-2">
               </div> <div class="d-flex flex-row justify-content-center align-items-center mt-3"> <span class="number"> フォロー : <span name="following">{% autoescape off %} {{ following }} {% endautoescape %}</span> フォロワー :<span name="followed">{% autoescape off %} {{ followed }} {% endautoescape %}</span>
               </span></span> </div> 
+              <a href="{% url 'like_post' pk=user.pk %}">いいね</a> 
               <div class=" d-flex mt-2">  </div> <div class="gap-3 mt-3 icons d-flex flex-row justify-content-center align-items-center"> <span><i class="fa fa-twitter"></i></span> <span><i class="fa fa-facebook-f"></i></span> <span><i class="fa fa-instagram"></i></span> <span><i class="fa fa-linkedin"></i></span> </div>  </div> </div>
 </div>
 {% for item in  model %}
@@ -25,6 +27,10 @@
       いいね：{{ item.like_count }}
     </div>
     <p><a href="{% url 'post_edit' pk=item.pk %}">編集</a></p>
+    <p>positive:{{ item.post_positive }}</p>
+    <p>negative:{{ item.post_negative }}</p>
+    <p>neutral:{{ item.post_neutral }}</p>
+    <p>mixed:{{ item.post_mixed }}</p>
 </div>
 {% endfor %}
 {% endblock content %}

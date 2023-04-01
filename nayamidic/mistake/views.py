@@ -20,6 +20,9 @@ from django.http import JsonResponse
 from django import forms
 from collections import defaultdict
 from django.db.models import Q 
+from django.conf import settings
+
+
 
 
 class Signup(CreateView):
@@ -94,8 +97,8 @@ class PostCreate(LoginRequiredMixin, View):
         text = utf8_string.decode('utf-8')
         comprehend = boto3.client(
         'comprehend',
-        aws_access_key_id='AKIAZLQTKUWJ374OPVPO',
-        aws_secret_access_key='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',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         region_name='ap-northeast-1'
         )
 

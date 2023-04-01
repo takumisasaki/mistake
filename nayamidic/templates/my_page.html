@@ -7,7 +7,7 @@
 
 
 {% block content %}
-<div class="container  p-30 d-fle justify-content-center" style="max-width: 500px;">
+<div class="container  p-30 d-fle justify-content-center" style="max-width: 605px;">
   <div class="card p-4"> 
       <div class=" image d-flex flex-column justify-content-center align-items-center"> 
           <button class="btn btn-secondary"> <img src="https://i.imgur.com/wvxPV9S.png" height="100" width="100" /></button>
@@ -27,6 +27,10 @@
       いいね：{{ item.like_count }}
     </div>
     <p><a href="{% url 'post_edit' pk=item.pk %}">編集</a></p>
+    <p>positive:{{ item.post_positive }}</p>
+    <p>negative:{{ item.post_negative }}</p>
+    <p>neutral:{{ item.post_neutral }}</p>
+    <p>mixed:{{ item.post_mixed }}</p>
 </div>
 {% endfor %}
 {% endblock content %}

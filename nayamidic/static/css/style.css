@@ -106,9 +106,14 @@ li{
   border: solid 1px #454545;
 }
 
+/* post_cerate.html */
 .card-header-create {
-    padding: 1rem 2rem 2rem 4rem;
+    padding-top:1rem;
+    padding-bottom:1rem;
     margin-bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: rgba(0,0,0,.03);
 }
 
@@ -120,7 +125,9 @@ li{
 
 .card-body-create {
     flex: 1 1 auto;
-    padding: 4rem 3rem;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 3rem; 
 }
 
 .mypage_p-4{
@@ -341,4 +348,21 @@ body {
 
 .recome_table {
   width: 250px;
+}
+
+/* Post_Create,html */
+input[type="submit"] {
+  display: block;
+  width: 86%;
+  padding: 10px;
+  background-color: #3d7e9a;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0 auto;
+}
+input[type="submit"]:hover {
+  background-color: #2f6287;
 }

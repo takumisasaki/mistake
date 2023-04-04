@@ -51,7 +51,7 @@ class PostList(TemplateView):
         context = super().get_context_data(**kwargs)
         context['post_list'] = []
 
-        # ログインしていない場合、フォロー数が0の場合、
+        # ログインしていない場合、フォロー数が0の場合
         # またはフォローしているユーザーの総投稿数が0の場合は最新の投稿を表示する
         #
         # ログインしていてフォローしているユーザがいて投稿数が1以上の場合は、

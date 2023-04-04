@@ -351,7 +351,7 @@ body {
 }
 
 /* Post_Create,html */
-input[type="submit"] {
+.card_button {
   display: block;
   width: 86%;
   padding: 10px;
@@ -363,6 +363,36 @@ input[type="submit"] {
   font-size: 16px;
   margin: 0 auto;
 }
-input[type="submit"]:hover {
+.card_button:hover {
   background-color: #2f6287;
+}
+
+/* フォローボタン */
+.gradient-button {
+  background-image: linear-gradient(to bottom, #7db9e8, #3e87b1);
+  border: none;
+  color: #fff;
+  padding: 10px 25px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+.gradient-button:active {
+  box-shadow: none;
+  transform: translateY(3px);
+}
+
+/* いいねボタン */
+.star {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.liked {
+  color: #FFD700;
 }

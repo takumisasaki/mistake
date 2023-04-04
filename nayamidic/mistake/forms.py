@@ -69,7 +69,9 @@ class PostForm(forms.Form):
         choices = (
             ('仕事', '仕事'),
             ('学校', '学校'),
-            ('ギャンブル', 'ギャンブル'),
+            ('お金', 'お金'),
+            ('家族', '家族'),
+            ('恋愛', '恋愛')
         ),
         required=True,
         widget=forms.widgets.Select
@@ -86,11 +88,10 @@ class PostEditForm(forms.Form):
     categories = forms.fields.ChoiceField(
         choices = (
             ('仕事', '仕事'),
-            ('恋愛', '恋愛'),
-            ('友人関係', '友人関係'),
             ('学校', '学校'),
-            ('ギャンブル', 'ギャンブル'),
-            ('詐欺', '詐欺')
+            ('お金', 'お金'),
+            ('家族', '家族'),
+            ('恋愛', '恋愛')
         ),
         required=True,
         widget=forms.widgets.Select

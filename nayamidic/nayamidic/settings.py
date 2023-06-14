@@ -27,6 +27,10 @@ AUTH_USER_MODEL = 'mistake.User'
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ytrjyr3!#%vrubko+d9xpdf283*3rkg84#u(b%dld$ve@xfyfj'
 
+AWS_ACCESS_KEY_ID = 'AKIAZLQTKUWJ5GG4MRTC'
+
+AWS_SECRET_ACCESS_KEY = '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'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -45,6 +49,9 @@ INSTALLED_APPS = [
     #'mistake.apps.MistakeConfig',
     'nayamidic',
     'mistake',
+    'rest_framework',
+    'mistake_react',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -86,7 +93,7 @@ WSGI_APPLICATION = 'nayamidic.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgresql',
+        'NAME': 'postgres',
         'USER': 'sasakitakumi',
         'PASSWORD': 'password',
         'HOST': 'localhost',
@@ -99,7 +106,10 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
-STATICFILES_DIRS = [BASE_DIR, 'static']
+CSRF_COOKIE_HTTPONLY = False
+
+
+STATICFILES_DIRS = [BASE_DIR, 'mistake_react/build']
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -116,6 +126,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

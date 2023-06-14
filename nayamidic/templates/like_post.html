@@ -1,0 +1,15 @@
+{% extends 'templates/base.html' %}
+{% block content %}
+{% for item in post_list %}
+    <div class="card container  p-30 d-fle justify-content-center" style="width: 35%;">
+        <div class="image_username">  
+            <img class="image_" src="https://i.imgur.com/wvxPV9S.png" height="60" width="60" />{{ item.user.username }}
+            <!-- <img class="image_" src="https://i.imgur.com/wvxPV9S.png" height="60" width="60" /> -->
+            <div class="card-categories">{{ item.categories }}</div>
+        </div>
+            <div class="card_body">
+                <p class="card-text">{{ item.text }}</p>
+        </div>
+    </div>
+{% endfor %}
+{% endblock content %}

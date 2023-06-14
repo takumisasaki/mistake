@@ -1,40 +1,43 @@
-from dataclasses import field
-from multiprocessing import context
-from re import template
-import this
-from urllib import request
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views import View
-from django.views.generic import DetailView, CreateView, TemplateView, ListView, UpdateView, FormView, View
-from django.contrib.auth.views import LoginView, LogoutView
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import User
-from pkg_resources import resource_stream
-from .models import Post, Follow, like, User as user
-from .forms import LoginForm, SignupForm, PostForm, UserUpdateForm, PostEditForm
-from django.db import IntegrityError
-from django.urls import reverse_lazy, reverse
+import boto3
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.messages import error as error_message
+from django.conf import settings
+from django.db.models import Q
 from django.http import JsonResponse
-from django import forms
-from collections import defaultdict
-from django.db.models import Q 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views import View
+from django.views.generic import (CreateView, DetailView, FormView, ListView,
+                                  TemplateView, UpdateView)
+from rest_framework import viewsets
+from .serializers import PostSerializer, MyPostSerializer, HomeSerializer, SignupSerializer, LoginSerializer
+from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from django.contrib.auth import logout
 
+from .forms import LoginForm, PostEditForm, PostForm, SignupForm, UserUpdateForm
+from .models import Follow, Post, User as user, like
 
 class Signup(CreateView):
     template_name = "templates/signup.html"
     model = user
     form_class = SignupForm
+    success_url = reverse_lazy('login')
+
     def form_valid(self, form):
         username = self.request.POST.get('username')
         queryset = user.objects.values('username')
-        for i in queryset:
-            if username == i:
-                print("重複してます。")
+
+        for existing_username in queryset:
+            if username == existing_username:
+                error_message(self.request, "Username is already taken.")
                 return redirect('signup')
+
         return super().form_valid(form)
-    success_url = reverse_lazy('login')
 
 class Login(LoginView):
     template_name = "templates/login.html"
@@ -50,32 +53,45 @@ class Logout(LogoutView):
 class PostList(TemplateView):
     template_name = 'templates/toppage.html'
     login_url = '/login/'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['post_list'] = []
-        #ログインしていない場合 or フォロー数が０の場合 or フォローしているユーザーの総投稿数が０の場合は最新の投稿を表示する
-        # ログインしていてフォローしているユーザいる＆投稿数が１以上の場合はフォローしているユーザーの投稿を表示する。
-        if(self.request.user.id == None) or len(list(Follow.objects.filter(following=self.request.user)\
-            .values_list('followed', flat=True))) == 0:
+
+        # ログインしていない場合、フォロー数が0の場合
+        # またはフォローしているユーザーの総投稿数が0の場合は最新の投稿を表示する
+        #
+        # ログインしていてフォローしているユーザがいて投稿数が1以上の場合は、
+        # フォローしているユーザーの投稿を表示する
+        no_followed_users = len(list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))) == 0
+
+        if self.request.user.id is None or no_followed_users:
             context['post_list'].append(Post.objects.filter(delete_flag=0).all().order_by('-created_at'))
         else:
-            followed_user = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
-            for i in range(len(followed_user)):
-                context['post_list'].append(Post.objects.filter(user=followed_user[i],delete_flag=0).all())
+            followed_users = list(Follow.objects.filter(following=self.request.user).values_list('followed', flat=True))
+            for followed_user in followed_users:
+                context['post_list'].append(Post.objects.filter(user=followed_user, delete_flag=0).all())
                 context['count'] = Follow.objects.values('followed')
+
         context['recome_user'] = user.objects.all()[:5]
         return context
+
 
 class SearchListView(ListView):
     template_name = 'templates/post_search.html'
     model = Post
+
     def get_queryset(self, **kwargs):
         queryset = super().get_queryset(**kwargs)
         query = self.request.GET.get('q')
-        queryset = queryset.filter(delete_flag=0).all()
+
+        # Filter out deleted posts
+        queryset = queryset.filter(delete_flag=0)
+
         if query:
             queryset = queryset.filter(
-                Q(categories__icontains=query) | Q(text__icontains=query), delete_flag=0
+                Q(categories__icontains=query) | Q(text__icontains=query),
+                delete_flag=0
             )
 
         return queryset.order_by('-created_at')
@@ -89,13 +105,33 @@ class PostCreate(LoginRequiredMixin, View):
         return render(request, 'templates/post_create.html', context)
     
     def post(self, request, pk):
+        text = request.POST.get('text')
+        utf8_string = text.encode('utf-8')
+        text = utf8_string.decode('utf-8')
+        comprehend = boto3.client(
+        'comprehend',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name='ap-northeast-1'
+        )
+
+        response = comprehend.detect_sentiment(
+        Text=text,
+        LanguageCode='ja'
+        )
+
+        sentiment_score = response['SentimentScore']
+        print(response)
         post_user = request.user
         categories = request.POST.get('categories')
-        text = request.POST.get('text')
         post_create = Post()
         post_create.user = post_user
         post_create.categories = categories
         post_create.text = text
+        post_create.post_positive = sentiment_score['Positive']
+        post_create.post_negative = sentiment_score['Negative']
+        post_create.post_neutral = sentiment_score['Neutral']
+        post_create.post_mixed = sentiment_score['Mixed']
         post_create.save()
         return redirect('toppage')
 
@@ -118,6 +154,16 @@ class PostEdit(LoginRequiredMixin, FormView):
 
     def get_success_url(self):
         return reverse('my_page', kwargs={'pk': self.request.user.id })
+
+class LikePostView(TemplateView):
+    template_name = 'templates/like_post.html'
+    model = Post
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        num = list(like.objects.values_list('post_id',flat=True).filter(user_id=self.kwargs['pk']))
+        print(type(num), num)
+        context['post_list'] = Post.objects.filter(pk__in=num)
+        return context
 
 def deletefunc(request, pk):
     if request.method == 'POST':
@@ -237,3 +283,45 @@ class UserDetail(LoginRequiredMixin, ListView):
         context['detail_user'] = detail_user
 
         return context
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+# class MyPostViewSet(viewsets.ModelViewSet):
+#     serializer_class = MyPostSerializer
+
+#     def get_queryset(self):
+#         user = self.request.user
+#         return Post.objects.filter(user=user)
+
+#     def create(self, request, *args, **kwargs):
+#         user = request.user
+#         # ここでuserを使用して何かを行う
+#         return super().create(request, *args, **kwargs)
+
+
+class ReactLogin(APIView):
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        # print(request.data['username'])
+        return Response({"message": "Success", "user": request.data['username']})
+    
+class ReactLogoutView(APIView):
+    def post(self, request):
+        logout(request)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ReactHomeView(viewsets.ModelViewSet):
+    queryset = Post.objects.select_related('user').all()
+    serializer_class = HomeSerializer
+
+class ReactSignupView(APIView):
+    def post(self, request):
+        serializer = SignupSerializer(data=request.data)
+        print(request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            return Response({"user": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -63,12 +63,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    categories = models.CharField(max_length=50)
+    categories = models.CharField(null=True, max_length=50)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now=True, help_text='投稿日')
     updated_at = models.DateTimeField(null=True, help_text='編集済み')
     delete_flag = models.IntegerField(default=0)
     like_count = models.IntegerField(default=0)
+    post_positive = models.FloatField(null=True, default=None)
+    post_negative = models.FloatField(null=True, default=None)
+    post_neutral = models.FloatField(null=True, default=None)
+    post_mixed = models.FloatField(null=True, default=None)
 
 class like(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.DO_NOTHING)
